@@ -2,7 +2,7 @@
 
 <div align="center">
 
-![Tubed Banner](https://via.placeholder.com/800x200/00ffff/000000?text=TUBED+-+%E8%B5%9B%E5%8D%9A%E6%96%87%E4%BB%B6%E6%89%98%E7%AE%A1)
+![Tubed Banner](./public/logo.png)
 
 *下一代赛博朋克风格文件托管服务*
 
@@ -376,9 +376,9 @@ console.error(`上传失败: ${error.message}`)
 
 ## 📧 支持
 
-- **仓库地址**：[https://github.com/yourusername/tubed](https://github.com/yourusername/tubed)
-- **问题反馈**：[GitHub Issues](https://github.com/yourusername/tubed/issues)
-- **邮箱联系**：your.email@example.com
+- **仓库地址**：[https://github.com/yourusername/tubed](https://github.com/hst-Sunday/tubed)
+- **问题反馈**：[GitHub Issues](https://github.com/hst-Sunday/tubed/issues)
+- **邮箱联系**：sunday@sundaysto.club
 
 ---
 
