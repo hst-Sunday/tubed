@@ -1,26 +1,501 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+:root {
+  /* 更鲜艳的赛博朋克色彩方案，提高文字对比度 */
+  --background: oklch(0.08 0.02 240); /* 更深的背景 */
+  --foreground: oklch(1 0 0); /* 纯白文字 */
+  --card: oklch(0.12 0.03 240); /* 卡片背景 */
+  --card-foreground: oklch(1 0 0); /* 卡片文字 */
+  --popover: oklch(0.12 0.03 240);
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(0.75 0.35 25); /* 更鲜艳的橙色 */
+  --primary-foreground: oklch(0.05 0 0); /* 深色文字在亮色背景上 */
+  --secondary: oklch(0.75 0.25 150); /* 更鲜艳的绿色 */
+  --secondary-foreground: oklch(0.05 0 0);
+  --muted: oklch(0.25 0.03 240);
+  --muted-foreground: oklch(0.85 0 0); /* 更亮的次要文字 */
+  --accent: oklch(0.8 0.3 300); /* 鲜艳的紫色作为强调色 */
+  --accent-foreground: oklch(0.05 0 0);
+  --destructive: oklch(0.65 0.35 15); /* 更鲜艳的红色 */
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.4 0.05 240); /* 更亮的边框 */
+  --input: oklch(0.15 0.03 240);
+  --ring: oklch(0.75 0.35 25 / 0.6);
+  --chart-1: oklch(0.75 0.35 25);
+  --chart-2: oklch(0.75 0.25 150);
+  --chart-3: oklch(0.8 0.3 300);
+  --chart-4: oklch(0.65 0.35 15);
+  --chart-5: oklch(1 0 0);
+  --radius: 0.5rem;
+  --sidebar: oklch(0.12 0.03 240);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(0.75 0.35 25);
+  --sidebar-primary-foreground: oklch(0.05 0 0);
+  --sidebar-accent: oklch(0.75 0.25 150);
+  --sidebar-accent-foreground: oklch(0.05 0 0);
+  --sidebar-border: oklch(0.4 0.05 240);
+  --sidebar-ring: oklch(0.75 0.35 25 / 0.6);
+}
+
+.dark {
+  /* 保持一致的鲜艳色彩 */
+  --background: oklch(0.08 0.02 240);
+  --foreground: oklch(1 0 0);
+  --card: oklch(0.12 0.03 240);
+  --card-foreground: oklch(1 0 0);
+  --popover: oklch(0.12 0.03 240);
+  --popover-foreground: oklch(1 0 0);
+  --primary: oklch(0.75 0.35 25);
+  --primary-foreground: oklch(0.05 0 0);
+  --secondary: oklch(0.75 0.25 150);
+  --secondary-foreground: oklch(0.05 0 0);
+  --muted: oklch(0.25 0.03 240);
+  --muted-foreground: oklch(0.85 0 0);
+  --accent: oklch(0.8 0.3 300);
+  --accent-foreground: oklch(0.05 0 0);
+  --destructive: oklch(0.65 0.35 15);
+  --destructive-foreground: oklch(1 0 0);
+  --border: oklch(0.4 0.05 240);
+  --input: oklch(0.15 0.03 240);
+  --ring: oklch(0.75 0.35 25 / 0.6);
+  --chart-1: oklch(0.75 0.35 25);
+  --chart-2: oklch(0.75 0.25 150);
+  --chart-3: oklch(0.8 0.3 300);
+  --chart-4: oklch(0.65 0.35 15);
+  --chart-5: oklch(1 0 0);
+  --sidebar: oklch(0.12 0.03 240);
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(0.75 0.35 25);
+  --sidebar-primary-foreground: oklch(0.05 0 0);
+  --sidebar-accent: oklch(0.75 0.25 150);
+  --sidebar-accent-foreground: oklch(0.05 0 0);
+  --sidebar-border: oklch(0.4 0.05 240);
+  --sidebar-ring: oklch(0.75 0.35 25 / 0.6);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
   }
-}
+  body {
+    @apply bg-background text-foreground;
+    /* 增强文字清晰度 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* 更鲜艳的网格背景 */
+  .cyberpunk-grid {
+    background-image: linear-gradient(rgba(255, 140, 0, 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 140, 0, 0.15) 1px, transparent 1px),
+      radial-gradient(circle at 20% 50%, rgba(0, 255, 127, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 20, 147, 0.08) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, rgba(0, 255, 255, 0.06) 0%, transparent 50%);
+    background-size: 40px 40px, 40px 40px, 600px 600px, 500px 500px, 400px 400px;
+    animation: grid-float 15s ease-in-out infinite;
+  }
+
+  @keyframes grid-float {
+    0%,
+    100% {
+      background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
+    }
+    50% {
+      background-position: 20px 20px, 20px 20px, 300px 300px, 250px 250px, 200px 200px;
+    }
+  }
+
+  /* 更强烈的霓虹发光效果 */
+  .neon-glow {
+    box-shadow: 0 0 8px rgba(255, 140, 0, 0.8), 0 0 16px rgba(255, 140, 0, 0.6), 0 0 24px rgba(255, 140, 0, 0.4), inset
+      0 0 8px rgba(255, 140, 0, 0.2);
+    animation: neon-pulse 2.5s ease-in-out infinite alternate;
+  }
+
+  .neon-glow-green {
+    box-shadow: 0 0 8px rgba(0, 255, 127, 0.8), 0 0 16px rgba(0, 255, 127, 0.6), 0 0 24px rgba(0, 255, 127, 0.4), inset
+      0 0 8px rgba(0, 255, 127, 0.2);
+    animation: neon-pulse-green 2.5s ease-in-out infinite alternate;
+  }
+
+  .neon-glow-purple {
+    box-shadow: 0 0 8px rgba(255, 20, 147, 0.8), 0 0 16px rgba(255, 20, 147, 0.6), 0 0 24px rgba(255, 20, 147, 0.4),
+      inset 0 0 8px rgba(255, 20, 147, 0.2);
+    animation: neon-pulse-purple 2.5s ease-in-out infinite alternate;
+  }
+
+  @keyframes neon-pulse {
+    0% {
+      box-shadow: 0 0 8px rgba(255, 140, 0, 0.8), 0 0 16px rgba(255, 140, 0, 0.6), 0 0 24px rgba(255, 140, 0, 0.4),
+        inset 0 0 8px rgba(255, 140, 0, 0.2);
+    }
+    100% {
+      box-shadow: 0 0 16px rgba(255, 140, 0, 1), 0 0 32px rgba(255, 140, 0, 0.8), 0 0 48px rgba(255, 140, 0, 0.6), inset
+        0 0 16px rgba(255, 140, 0, 0.4);
+    }
+  }
+
+  @keyframes neon-pulse-green {
+    0% {
+      box-shadow: 0 0 8px rgba(0, 255, 127, 0.8), 0 0 16px rgba(0, 255, 127, 0.6), 0 0 24px rgba(0, 255, 127, 0.4),
+        inset 0 0 8px rgba(0, 255, 127, 0.2);
+    }
+    100% {
+      box-shadow: 0 0 16px rgba(0, 255, 127, 1), 0 0 32px rgba(0, 255, 127, 0.8), 0 0 48px rgba(0, 255, 127, 0.6), inset
+        0 0 16px rgba(0, 255, 127, 0.4);
+    }
+  }
+
+  @keyframes neon-pulse-purple {
+    0% {
+      box-shadow: 0 0 8px rgba(255, 20, 147, 0.8), 0 0 16px rgba(255, 20, 147, 0.6), 0 0 24px rgba(255, 20, 147, 0.4),
+        inset 0 0 8px rgba(255, 20, 147, 0.2);
+    }
+    100% {
+      box-shadow: 0 0 16px rgba(255, 20, 147, 1), 0 0 32px rgba(255, 20, 147, 0.8), 0 0 48px rgba(255, 20, 147, 0.6),
+        inset 0 0 16px rgba(255, 20, 147, 0.4);
+    }
+  }
+
+  /* 更鲜艳的边框脉冲动画 */
+  .pulse-border {
+    animation: pulse-border-enhanced 1.8s infinite;
+  }
+
+  @keyframes pulse-border-enhanced {
+    0% {
+      border-color: rgba(255, 140, 0, 0.7);
+      box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
+    }
+    25% {
+      border-color: rgba(0, 255, 127, 0.8);
+      box-shadow: 0 0 20px rgba(0, 255, 127, 0.6);
+    }
+    50% {
+      border-color: rgba(255, 20, 147, 0.9);
+      box-shadow: 0 0 30px rgba(255, 20, 147, 0.7);
+    }
+    75% {
+      border-color: rgba(0, 255, 255, 0.8);
+      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
+    }
+    100% {
+      border-color: rgba(255, 140, 0, 0.7);
+      box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
+    }
+  }
+
+  /* 更强烈的文字发光效果 */
+  .text-glow {
+    text-shadow: 0 0 8px currentColor, 0 0 16px currentColor, 0 0 24px currentColor, 0 0 32px currentColor;
+    animation: text-flicker 3s ease-in-out infinite;
+  }
+
+  @keyframes text-flicker {
+    0%,
+    100% {
+      opacity: 1;
+      text-shadow: 0 0 8px currentColor, 0 0 16px currentColor, 0 0 24px currentColor, 0 0 32px currentColor;
+    }
+    2% {
+      opacity: 0.9;
+    }
+    4% {
+      opacity: 1;
+    }
+    8% {
+      opacity: 0.95;
+    }
+    10% {
+      opacity: 1;
+    }
+    50% {
+      text-shadow: 0 0 12px currentColor, 0 0 24px currentColor, 0 0 36px currentColor, 0 0 48px currentColor;
+    }
+    92% {
+      opacity: 1;
+    }
+    94% {
+      opacity: 0.95;
+    }
+    96% {
+      opacity: 1;
+    }
+    98% {
+      opacity: 0.98;
+    }
+  }
+
+  /* 更鲜艳的扫描线效果 */
+  .scan-lines::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(transparent 0%, rgba(0, 255, 127, 0.2) 50%, transparent 100%);
+    animation: scan 2.5s linear infinite;
+    pointer-events: none;
+  }
+
+  @keyframes scan {
+    0% {
+      transform: translateY(-100%);
+    }
+    100% {
+      transform: translateY(100vh);
+    }
+  }
+
+  /* 更鲜艳的全息效果 */
+  .holographic {
+    background: linear-gradient(
+      45deg,
+      rgba(255, 140, 0, 0.15) 0%,
+      rgba(0, 255, 127, 0.15) 20%,
+      rgba(255, 20, 147, 0.15) 40%,
+      rgba(0, 255, 255, 0.15) 60%,
+      rgba(255, 140, 0, 0.15) 80%,
+      rgba(0, 255, 127, 0.15) 100%
+    );
+    background-size: 300% 300%;
+    animation: holographic-shift 6s ease-in-out infinite;
+  }
+
+  @keyframes holographic-shift {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* 增强故障效果 */
+  .glitch {
+    animation: glitch 1.5s infinite;
+  }
+
+  @keyframes glitch {
+    0%,
+    90%,
+    100% {
+      transform: translate(0);
+      filter: hue-rotate(0deg);
+    }
+    10% {
+      transform: translate(-2px, -1px);
+      filter: hue-rotate(90deg);
+    }
+    20% {
+      transform: translate(2px, 1px);
+      filter: hue-rotate(180deg);
+    }
+    30% {
+      transform: translate(-1px, 2px);
+      filter: hue-rotate(270deg);
+    }
+    40% {
+      transform: translate(1px, -2px);
+      filter: hue-rotate(360deg);
+    }
+    50% {
+      transform: translate(-2px, -1px);
+      filter: hue-rotate(45deg);
+    }
+    60% {
+      transform: translate(2px, 1px);
+      filter: hue-rotate(135deg);
+    }
+    70% {
+      transform: translate(-1px, 2px);
+      filter: hue-rotate(225deg);
+    }
+    80% {
+      transform: translate(1px, -2px);
+      filter: hue-rotate(315deg);
+    }
+  }
+
+  .float {
+    animation: float 4s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  /* 更鲜艳的数字雨效果 */
+  .digital-rain::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: linear-gradient(
+        transparent 65%,
+        rgba(0, 255, 127, 0.06) 65.5%,
+        rgba(0, 255, 127, 0.06) 66%,
+        transparent 66.5%
+      ),
+      linear-gradient(
+        90deg,
+        transparent 65%,
+        rgba(255, 140, 0, 0.06) 65.5%,
+        rgba(255, 140, 0, 0.06) 66%,
+        transparent 66.5%
+      ),
+      linear-gradient(
+        45deg,
+        transparent 70%,
+        rgba(255, 20, 147, 0.04) 70.5%,
+        rgba(255, 20, 147, 0.04) 71%,
+        transparent 71.5%
+      );
+    background-size: 80px 80px, 80px 80px, 120px 120px;
+    animation: digital-rain 8s linear infinite;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  @keyframes digital-rain {
+    0% {
+      background-position: 0 0, 0 0, 0 0;
+    }
+    100% {
+      background-position: 0 80px, 80px 0, 120px 120px;
+    }
+  }
+
+  /* 新增强调文字样式 */
+  .text-cyber {
+    background: linear-gradient(45deg, #ff8c00, #00ff7f, #ff1493, #00ffff);
+    background-size: 400% 400%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: cyber-text 3s ease-in-out infinite;
+    font-weight: 700;
+  }
+
+  @keyframes cyber-text {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* 添加超亮霓虹文字效果 */
+  .neon-text-bright {
+    color: #ffffff;
+    text-shadow: 0 0 5px #ff8c00, 0 0 10px #ff8c00, 0 0 15px #ff8c00, 0 0 20px #ff8c00, 0 0 30px #ff8c00, 0 0 40px
+      #ff8c00;
+    animation: neon-text-flicker 2s ease-in-out infinite alternate;
+  }
+
+  @keyframes neon-text-flicker {
+    0% {
+      text-shadow: 0 0 5px #ff8c00, 0 0 10px #ff8c00, 0 0 15px #ff8c00, 0 0 20px #ff8c00, 0 0 30px #ff8c00, 0 0 40px
+        #ff8c00;
+    }
+    100% {
+      text-shadow: 0 0 8px #ff8c00, 0 0 16px #ff8c00, 0 0 24px #ff8c00, 0 0 32px #ff8c00, 0 0 48px #ff8c00, 0 0 64px
+        #ff8c00;
+    }
+  }
 }
