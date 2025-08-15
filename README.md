@@ -212,6 +212,67 @@ Cookie: auth-token=<jwt-token>
 }
 ```
 
+### 系统监控
+
+#### 🏥 健康检查（无需认证）
+```http
+GET /api/health
+```
+
+**响应示例（健康状态）：**
+```json
+{
+  "status": "healthy",
+  "timestamp": "2025-01-15T10:30:00.000Z",
+  "uptime": 3600,
+  "version": "1.0.0",
+  "environment": "production",
+  "database": {
+    "status": "connected",
+    "totalFiles": 152,
+    "totalSize": 1073741824,
+    "categories": 5
+  },
+  "storage": {
+    "uploadsDirectory": {
+      "exists": true,
+      "path": "/app/public/uploads"
+    }
+  },
+  "config": {
+    "authConfigured": true,
+    "jwtConfigured": true
+  },
+  "responseTime": 15
+}
+```
+
+**响应示例（降级状态）：**
+```json
+{
+  "status": "degraded",
+  "timestamp": "2025-01-15T10:30:00.000Z",
+  "uptime": 3600,
+  "version": "1.0.0",
+  "environment": "production",
+  "database": {
+    "status": "error",
+    "error": "Database connection failed"
+  },
+  "config": {
+    "authConfigured": false,
+    "warning": "AUTH_CODE not configured"
+  },
+  "responseTime": 25
+}
+```
+
+#### 💓 简化健康检查（HEAD请求）
+```http
+HEAD /api/health
+```
+仅返回HTTP状态码（200表示健康，503表示不健康），适用于负载均衡器。
+
 ### 文件操作
 
 > **⚠️ 以下所有接口都需要认证（JWT Token 或 AUTH_CODE 任选其一）**
@@ -638,7 +699,21 @@ services:
       - ./data:/app/data
       - ./public/uploads:/app/public/uploads
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 ```
+
+#### 健康检查配置说明
+
+- **test**: 使用 `/api/health` 端点进行健康检查
+- **interval**: 每30秒执行一次检查
+- **timeout**: 单次检查超时时间10秒
+- **retries**: 连续失败3次后标记为不健康
+- **start_period**: 容器启动后等待60秒再开始健康检查
 
 ### 生产环境构建
 
@@ -738,22 +813,56 @@ npm start
 - **访问控制**：受保护的路由和 API 端点
 - **输入清理**：所有用户输入都经过适当清理
 
-## 📊 性能
+## 📊 性能与监控
 
-### 监控
+### 健康检查系统
+
+应用程序提供完整的健康检查功能：
+
+```bash
+# 检查应用健康状态
+curl http://localhost:3000/api/health
+
+# 简化健康检查（仅状态码）
+curl -I http://localhost:3000/api/health
+```
+
+#### 健康状态说明
+
+- **healthy**: 所有系统正常运行
+- **degraded**: 部分功能异常但服务可用
+- **unhealthy**: 服务不可用
+
+#### Docker 健康检查
+
+容器运行时可通过以下命令查看健康状态：
+
+```bash
+# 查看容器健康状态
+docker ps
+
+# 查看详细健康检查日志
+docker inspect tubed-app | grep -A 10 Health
+```
+
+### 性能监控
 
 应用程序包含内置的性能监控：
 
 - Web Vitals 跟踪
 - 上传进度指示器
 - 实时文件处理状态
+- 健康检查响应时间监控
 
-### 优化
+### 日志记录
 
 ```javascript
 // API 响应日志
 console.log(`文件已上传: ${filename}, 大小: ${size}`)
 console.error(`上传失败: ${error.message}`)
+
+// 健康检查日志
+console.log(`健康检查: ${status}, 响应时间: ${responseTime}ms`)
 ```
 
 ## 🤝 贡献指南
