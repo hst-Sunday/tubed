@@ -1,8 +1,7 @@
 "use client"
 
-import React from "react"
-
-import { useState, useRef, useCallback } from "react"
+import React, { useState, useRef, useCallback } from "react"
+import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Upload, ImageIcon, Copy, Check, X } from "lucide-react"
@@ -14,6 +13,7 @@ interface UploadedFile {
   url: string
   size: number
   type: string
+  uploadedAt?: string
 }
 
 export function UploadZone() {
@@ -26,24 +26,41 @@ export function UploadZone() {
   const handleFiles = useCallback(async (files: FileList) => {
     setIsUploading(true)
 
-    for (const file of Array.from(files)) {
-      if (file.type.startsWith("image/")) {
-        // 模拟上传过程
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-
-        const newFile: UploadedFile = {
-          id: Math.random().toString(36).substr(2, 9),
-          name: file.name,
-          url: URL.createObjectURL(file),
-          size: file.size,
-          type: file.type,
+    try {
+      const formData = new FormData()
+      
+      // Add all files to FormData
+      for (const file of Array.from(files)) {
+        if (file.type.startsWith("image/")) {
+          formData.append("files", file)
         }
-
-        setUploadedFiles((prev) => [...prev, newFile])
       }
-    }
 
-    setIsUploading(false)
+      // Upload to server
+      const response = await fetch("/api/upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error(`Upload failed: ${response.statusText}`)
+      }
+
+      const result = await response.json()
+      
+      if (result.success && result.files) {
+        // Add uploaded files to the list
+        setUploadedFiles((prev) => [...prev, ...result.files])
+      } else {
+        throw new Error(result.error || "Upload failed")
+      }
+    } catch (error) {
+      console.error("Upload error:", error)
+      // You might want to show a toast or error message here
+      alert(`上传失败: ${error instanceof Error ? error.message : "未知错误"}`)
+    } finally {
+      setIsUploading(false)
+    }
   }, [])
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
@@ -171,9 +188,11 @@ export function UploadZone() {
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex items-center justify-center neon-glow">
                     {file.type.startsWith("image/") ? (
-                      <img
+                      <Image
                         src={file.url || "/placeholder.svg"}
                         alt={file.name}
+                        width={64}
+                        height={64}
                         className="w-full h-full object-cover"
                       />
                     ) : (
