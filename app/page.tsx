@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/dialog"
 import { AuthGuard } from "@/components/auth-guard"
 import { useAuth } from "@/lib/auth"
-import { Zap, Shield, Rocket, Globe, LogOut } from "lucide-react"
+import { Zap, Shield, Rocket, Globe, LogOut, Settings } from "lucide-react"
+import Link from "next/link"
 
 export default function HomePage() {
   const { logout } = useAuth()
@@ -119,18 +120,29 @@ export default function HomePage() {
         </div>
       </main>
 
-      {/* 悬浮退出登录按钮 */}
-      <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
-        <DialogTrigger asChild>
+      {/* 悬浮操作按钮 */}
+      <div className="fixed bottom-6 right-6 z-50 flex flex-col space-y-4">
+        <Link href="/dashboard">
           <Button
-            variant="destructive"
             size="icon"
-            className="fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full neon-glow-purple float hover:scale-110 transition-all duration-300 shadow-lg"
-            title="退出登录"
+            className="w-14 h-14 rounded-full neon-glow-blue float hover:scale-110 transition-all duration-300 shadow-lg"
+            title="文件管理"
           >
-            <LogOut className="w-6 h-6" />
+            <Settings className="w-6 h-6" />
           </Button>
-        </DialogTrigger>
+        </Link>
+        
+        <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
+          <DialogTrigger asChild>
+            <Button
+              variant="destructive"
+              size="icon"
+              className="w-14 h-14 rounded-full neon-glow-purple float hover:scale-110 transition-all duration-300 shadow-lg"
+              title="退出登录"
+            >
+              <LogOut className="w-6 h-6" />
+            </Button>
+          </DialogTrigger>
         <DialogContent className="neon-glow holographic">
           <DialogHeader>
             <DialogTitle className="text-center text-glow">退出登录</DialogTitle>
@@ -155,7 +167,8 @@ export default function HomePage() {
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
+        </Dialog>
+      </div>
 
       <footer className="border-t border-border/50 mt-20 neon-glow-green">
         <div className="container mx-auto px-4 py-8">

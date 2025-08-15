@@ -4,6 +4,9 @@ import { existsSync } from "fs"
 import path from "path"
 import { randomBytes } from "crypto"
 import { validateFileSize, isFileTypeAllowed, getFileCategory } from "@/lib/file-types"
+import { insertFile, type FileRecord } from "@/lib/database"
+// 导入迁移模块以确保在首次使用数据库时执行迁移
+import "@/lib/migrate"
 
 interface UploadedFileInfo {
   id: string
@@ -81,11 +84,25 @@ export async function POST(req: NextRequest) {
         uploadedAt: new Date().toISOString(),
       }
 
-      uploadedFiles.push(fileInfo)
+      // Save to database
+      try {
+        insertFile(fileInfo as FileRecord)
+        uploadedFiles.push(fileInfo)
+      } catch (dbError) {
+        console.error("Database save error:", dbError)
+        // 如果数据库保存失败，删除已上传的文件
+        const fs = await import("fs/promises")
+        try {
+          await fs.unlink(filePath)
+        } catch (unlinkError) {
+          console.error("Failed to cleanup file:", unlinkError)
+        }
+        return NextResponse.json(
+          { error: `Failed to save file metadata for ${file.name}` },
+          { status: 500 }
+        )
+      }
     }
-
-    // Store metadata (simple JSON file approach)
-    await storeFileMetadata(uploadedFiles)
 
     return NextResponse.json({ 
       success: true, 
@@ -101,25 +118,3 @@ export async function POST(req: NextRequest) {
   }
 }
 
-async function storeFileMetadata(files: UploadedFileInfo[]) {
-  try {
-    const metadataPath = path.join(process.cwd(), "uploads-metadata.json")
-    let existingData: UploadedFileInfo[] = []
-
-    // Read existing metadata if file exists
-    if (existsSync(metadataPath)) {
-      const { readFile } = await import("fs/promises")
-      const existingContent = await readFile(metadataPath, "utf-8")
-      existingData = JSON.parse(existingContent)
-    }
-
-    // Append new files
-    const updatedData = [...existingData, ...files]
-
-    // Write back to file
-    await writeFile(metadataPath, JSON.stringify(updatedData, null, 2))
-  } catch (error) {
-    console.error("Failed to store metadata:", error)
-    // Don't fail the entire upload if metadata storage fails
-  }
-}
