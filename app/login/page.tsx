@@ -56,12 +56,12 @@ export default function LoginPage() {
           
           <div className="space-y-2">
             <h1 className="text-3xl font-[var(--font-dm-sans)] text-primary text-glow">安全验证</h1>
-            <p className="text-muted-foreground">请输入授权码以访问 CyberHost</p>
+            <p className="text-muted-foreground">请输入授权码以访问 TuBed</p>
           </div>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="space-y-2">
+          <div className="space-y-2 flex flex-col">
             <label htmlFor="authCode" className="text-sm font-medium text-secondary">
               授权码
             </label>
@@ -105,13 +105,13 @@ export default function LoginPage() {
                 <span>验证中...</span>
               </div>
             ) : (
-              "进入 CyberHost"
+              "进入 TuBed"
             )}
           </Button>
         </form>
 
         <div className="text-center text-xs text-muted-foreground">
-          <p>© 2025 CyberHost. 安全访问，赛博朋克图床服务</p>
+          <p>© 2025 TuBed. 安全访问，赛博朋克图床服务</p>
         </div>
       </Card>
     </div>

@@ -260,7 +260,7 @@ export function FileCard({
           )}
 
           {/* 图片文件显示简化信息 */}
-          {/* {isImage && (
+          {isImage && (
             <div className="text-center">
               <h3 className="text-sm font-medium text-foreground truncate" title={file.name}>
                 {file.name}
@@ -270,7 +270,7 @@ export function FileCard({
                 <span>{formatDate(file.uploadedAt)}</span>
               </div>
             </div>
-          )} */}
+          )}
 
           {/* 操作按钮 */}
           <div className="flex space-x-2 transition-opacity duration-200">
