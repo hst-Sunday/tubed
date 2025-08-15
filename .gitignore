@@ -45,3 +45,5 @@ next-env.d.ts
 CLAUDE.md
 
 public/uploads/
+
+uploads-metadata.json

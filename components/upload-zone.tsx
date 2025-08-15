@@ -4,8 +4,15 @@ import React, { useState, useRef, useCallback } from "react"
 import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Upload, ImageIcon, Copy, Check, X } from "lucide-react"
+import { Upload, Check, X, Link, FileText, Code } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { 
+  getAllAcceptedTypes, 
+  getFileIconComponent, 
+  formatFileSize, 
+  getSupportedFileTypesDescription,
+  FILE_CATEGORIES
+} from "@/lib/file-types"
 
 interface UploadedFile {
   id: string
@@ -13,6 +20,7 @@ interface UploadedFile {
   url: string
   size: number
   type: string
+  category: string
   uploadedAt?: string
 }
 
@@ -20,7 +28,7 @@ export function UploadZone() {
   const [isDragOver, setIsDragOver] = useState(false)
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([])
   const [isUploading, setIsUploading] = useState(false)
-  const [copiedId, setCopiedId] = useState<string | null>(null)
+  const [copiedItem, setCopiedItem] = useState<{ fileId: string; format: string } | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFiles = useCallback(async (files: FileList) => {
@@ -31,9 +39,7 @@ export function UploadZone() {
       
       // Add all files to FormData
       for (const file of Array.from(files)) {
-        if (file.type.startsWith("image/")) {
-          formData.append("files", file)
-        }
+        formData.append("files", file)
       }
 
       // Upload to server
@@ -98,15 +104,57 @@ export function UploadZone() {
     fileInputRef.current?.click()
   }, [])
 
-  const copyToClipboard = useCallback(async (url: string, id: string) => {
+  const getFullUrl = useCallback((relativeUrl: string) => {
+    if (typeof window !== "undefined") {
+      return `${window.location.origin}${relativeUrl}`
+    }
+    return relativeUrl
+  }, [])
+
+  const copyToClipboard = useCallback(async (text: string, fileId: string, format: string) => {
     try {
-      await navigator.clipboard.writeText(url)
-      setCopiedId(id)
-      setTimeout(() => setCopiedId(null), 2000)
+      await navigator.clipboard.writeText(text)
+      setCopiedItem({ fileId, format })
+      setTimeout(() => setCopiedItem(null), 2000)
     } catch (err) {
       console.error("Failed to copy:", err)
     }
   }, [])
+
+  const copyUrl = useCallback((file: UploadedFile) => {
+    const fullUrl = getFullUrl(file.url)
+    copyToClipboard(fullUrl, file.id, "url")
+  }, [getFullUrl, copyToClipboard])
+
+  const copyMarkdown = useCallback((file: UploadedFile) => {
+    const fullUrl = getFullUrl(file.url)
+    let markdown: string
+    
+    if (file.category === FILE_CATEGORIES.IMAGE) {
+      markdown = `![${file.name}](${fullUrl})`
+    } else {
+      markdown = `[${file.name}](${fullUrl})`
+    }
+    
+    copyToClipboard(markdown, file.id, "markdown")
+  }, [getFullUrl, copyToClipboard])
+
+  const copyHtml = useCallback((file: UploadedFile) => {
+    const fullUrl = getFullUrl(file.url)
+    let html: string
+    
+    if (file.category === FILE_CATEGORIES.IMAGE) {
+      html = `<img src="${fullUrl}" alt="${file.name}" />`
+    } else if (file.category === FILE_CATEGORIES.VIDEO) {
+      html = `<video controls><source src="${fullUrl}" type="${file.type}">Your browser does not support the video tag.</video>`
+    } else if (file.category === FILE_CATEGORIES.AUDIO) {
+      html = `<audio controls><source src="${fullUrl}" type="${file.type}">Your browser does not support the audio tag.</audio>`
+    } else {
+      html = `<a href="${fullUrl}" download="${file.name}">${file.name}</a>`
+    }
+    
+    copyToClipboard(html, file.id, "html")
+  }, [getFullUrl, copyToClipboard])
 
   const removeFile = useCallback((id: string) => {
     setUploadedFiles((prev) => prev.filter((file) => file.id !== id))
@@ -138,10 +186,15 @@ export function UploadZone() {
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-2xl font-bold font-[var(--font-heading)] text-white drop-shadow-lg neon-text-bright tracking-wide">
+            <h3 className="text-2xl font-[var(--font-heading)] text-white drop-shadow-lg neon-text-bright tracking-wide">
               拖拽文件到此处上传
             </h3>
-            <p className="text-lg text-gray-200 font-medium drop-shadow-md">或者点击选择文件，支持 Ctrl+V 粘贴上传</p>
+            <p className="text-lg text-gray-200 font-medium drop-shadow-md">
+              或者点击选择文件，支持 Ctrl+V 粘贴上传
+            </p>
+            <p className="text-sm text-gray-300 mt-2">
+              支持：{getSupportedFileTypesDescription()}
+            </p>
           </div>
 
           <Button
@@ -168,7 +221,7 @@ export function UploadZone() {
           ref={fileInputRef}
           type="file"
           multiple
-          accept="image/*"
+          accept={getAllAcceptedTypes()}
           className="hidden"
           onChange={(e) => e.target.files && handleFiles(e.target.files)}
         />
@@ -176,7 +229,7 @@ export function UploadZone() {
 
       {uploadedFiles.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-bold font-[var(--font-heading)] text-secondary text-glow">已上传文件</h3>
+          <h3 className="text-lg font-[var(--font-dm-sans)] text-secondary text-glow">已上传文件</h3>
 
           <div className="grid gap-4">
             {uploadedFiles.map((file, index) => (
@@ -187,7 +240,7 @@ export function UploadZone() {
               >
                 <div className="flex items-center gap-4">
                   <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex items-center justify-center neon-glow">
-                    {file.type.startsWith("image/") ? (
+                    {file.category === FILE_CATEGORIES.IMAGE ? (
                       <Image
                         src={file.url || "/placeholder.svg"}
                         alt={file.name}
@@ -196,33 +249,87 @@ export function UploadZone() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <ImageIcon className="w-6 h-6 text-muted-foreground float" />
+                      (() => {
+                        const IconComponent = getFileIconComponent({ name: file.name, type: file.type } as File)
+                        return <IconComponent className="w-8 h-8 text-primary float" />
+                      })()
                     )}
                   </div>
 
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium truncate">{file.name}</p>
-                    <p className="text-sm text-muted-foreground">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-                    <p className="text-xs text-secondary font-mono break-all">{file.url}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="font-medium truncate">{file.name}</p>
+                      <span className="text-xs px-2 py-1 bg-primary/20 text-primary rounded-full shrink-0">
+                        {file.category === FILE_CATEGORIES.IMAGE && '图片'}
+                        {file.category === FILE_CATEGORIES.DOCUMENT && '文档'}
+                        {file.category === FILE_CATEGORIES.PDF && 'PDF'}
+                        {file.category === FILE_CATEGORIES.SPREADSHEET && '表格'}
+                        {file.category === FILE_CATEGORIES.VIDEO && '视频'}
+                        {file.category === FILE_CATEGORIES.AUDIO && '音频'}
+                        {file.category === FILE_CATEGORIES.ARCHIVE && '压缩包'}
+                        {file.category === FILE_CATEGORIES.CODE && '代码'}
+                        {file.category === FILE_CATEGORIES.OTHER && '其他'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-muted-foreground">{formatFileSize(file.size)}</p>
+                    <p className="text-xs text-muted-foreground font-mono break-all">{getFullUrl(file.url)}</p>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    {/* URL Copy Button */}
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => copyToClipboard(file.url, file.id)}
-                      className="border-secondary text-secondary hover:bg-secondary/20 neon-glow-green hover:scale-110 transition-all duration-200"
+                      onClick={() => copyUrl(file)}
+                      className="border-secondary text-secondary hover:bg-secondary/20 neon-glow-green hover:scale-110 transition-all duration-200 px-2"
+                      title="复制 URL"
                     >
-                      {copiedId === file.id ? <Check className="w-4 h-4 text-glow" /> : <Copy className="w-4 h-4" />}
+                      {copiedItem?.fileId === file.id && copiedItem?.format === "url" ? (
+                        <Check className="w-3 h-3 text-glow" />
+                      ) : (
+                        <Link className="w-3 h-3" />
+                      )}
                     </Button>
 
+                    {/* Markdown Copy Button */}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => copyMarkdown(file)}
+                      className="border-primary text-primary hover:bg-primary/20 neon-glow hover:scale-110 transition-all duration-200 px-2"
+                      title="复制 Markdown"
+                    >
+                      {copiedItem?.fileId === file.id && copiedItem?.format === "markdown" ? (
+                        <Check className="w-3 h-3 text-glow" />
+                      ) : (
+                        <FileText className="w-3 h-3" />
+                      )}
+                    </Button>
+
+                    {/* HTML Copy Button */}
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      onClick={() => copyHtml(file)}
+                      className="border-accent text-accent hover:bg-accent/20 neon-glow-purple hover:scale-110 transition-all duration-200 px-2"
+                      title="复制 HTML"
+                    >
+                      {copiedItem?.fileId === file.id && copiedItem?.format === "html" ? (
+                        <Check className="w-3 h-3 text-glow" />
+                      ) : (
+                        <Code className="w-3 h-3" />
+                      )}
+                    </Button>
+
+                    {/* Remove Button */}
                     <Button
                       size="sm"
                       variant="outline"
                       onClick={() => removeFile(file.id)}
-                      className="border-destructive text-destructive hover:bg-destructive/20 hover:scale-110 transition-all duration-200"
+                      className="border-destructive text-destructive hover:bg-destructive/20 hover:scale-110 transition-all duration-200 px-2 ml-1"
+                      title="删除文件"
                     >
-                      <X className="w-4 h-4" />
+                      <X className="w-3 h-3" />
                     </Button>
                   </div>
                 </div>

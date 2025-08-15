@@ -3,6 +3,7 @@ import { writeFile, mkdir } from "fs/promises"
 import { existsSync } from "fs"
 import path from "path"
 import { randomBytes } from "crypto"
+import { validateFileSize, isFileTypeAllowed, getFileCategory } from "@/lib/file-types"
 
 interface UploadedFileInfo {
   id: string
@@ -10,6 +11,7 @@ interface UploadedFileInfo {
   url: string
   size: number
   type: string
+  category: string
   uploadedAt: string
 }
 
@@ -40,13 +42,23 @@ export async function POST(req: NextRequest) {
     const uploadedFiles: UploadedFileInfo[] = []
 
     for (const file of files) {
-      if (!file || !file.type.startsWith("image/")) {
-        continue // Skip non-image files
+      if (!file) {
+        continue
       }
 
-      // Validate file size (10MB limit)
-      if (file.size > 10 * 1024 * 1024) {
-        return NextResponse.json({ error: `File ${file.name} is too large (max 10MB)` }, { status: 400 })
+      // 验证文件类型是否被允许
+      if (!isFileTypeAllowed(file)) {
+        return NextResponse.json({ 
+          error: `不支持的文件类型: ${file.name}` 
+        }, { status: 400 })
+      }
+
+      // 验证文件大小
+      const sizeValidation = validateFileSize(file)
+      if (!sizeValidation.valid) {
+        return NextResponse.json({ 
+          error: sizeValidation.error 
+        }, { status: 400 })
       }
 
       // Generate unique filename
@@ -65,6 +77,7 @@ export async function POST(req: NextRequest) {
         url: `/uploads/${uniqueFilename}`,
         size: file.size,
         type: file.type,
+        category: getFileCategory(file),
         uploadedAt: new Date().toISOString(),
       }
 
