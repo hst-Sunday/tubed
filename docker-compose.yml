@@ -1,8 +1,6 @@
 services:
   tubed:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: ghcr.io/hst-Sunday/tubed:latest
     container_name: tubed-app
     restart: unless-stopped
     ports:
