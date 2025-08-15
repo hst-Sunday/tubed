@@ -5,6 +5,7 @@ import path from "path"
 import { randomBytes } from "crypto"
 import { validateFileSize, isFileTypeAllowed, getFileCategory } from "@/lib/file-types"
 import { insertFile, type FileRecord } from "@/lib/database"
+import { verifyAuth } from "@/lib/auth-middleware"
 // 导入迁移模块以确保在首次使用数据库时执行迁移
 import "@/lib/migrate"
 
@@ -28,6 +29,12 @@ function generateUniqueFilename(originalName: string): string {
 
 export async function POST(req: NextRequest) {
   try {
+    // 验证用户身份
+    const authResult = await verifyAuth(req)
+    if (!authResult.success) {
+      return authResult.response!
+    }
+
     // Ensure uploads directory exists
     const uploadsDir = path.join(process.cwd(), "public", "uploads")
     if (!existsSync(uploadsDir)) {

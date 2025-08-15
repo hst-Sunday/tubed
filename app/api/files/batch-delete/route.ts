@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getFileById, deleteFile } from "@/lib/database"
+import { verifyAuth } from "@/lib/auth-middleware"
 import path from "path"
 import { unlink } from "fs/promises"
 
 export async function POST(request: NextRequest) {
   try {
+    // 验证用户身份
+    const authResult = await verifyAuth(request)
+    if (!authResult.success) {
+      return authResult.response!
+    }
+
     const { fileIds }: { fileIds: string[] } = await request.json()
     
     if (!fileIds || !Array.isArray(fileIds) || fileIds.length === 0) {

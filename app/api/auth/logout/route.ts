@@ -1,7 +1,14 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
+import { verifyAuth } from "@/lib/auth-middleware"
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   try {
+    // 验证用户身份（可选，但为了一致性保留）
+    const authResult = await verifyAuth(request)
+    if (!authResult.success) {
+      return authResult.response!
+    }
+
     // 清除认证cookie
     const response = NextResponse.json(
       { 

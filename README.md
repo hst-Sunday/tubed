@@ -126,9 +126,47 @@ npm run dev
 
 ## 📡 API 接口
 
+> **🔒 重要提示：除登录接口外，所有API接口都需要认证。支持两种认证方式：JWT Token 或直接 AUTH_CODE。**
+
+### 认证机制
+
+支持以下两种认证方式，任选其一即可：
+
+#### 方式 1：JWT Token 认证（推荐用于Web应用）
+1. **获取 Token**：通过 `/api/auth/login` 接口使用正确的 `AUTH_CODE` 获取 JWT Token
+2. **Token 存储**：JWT Token 自动存储在 httpOnly Cookie 中，有效期 24 小时
+3. **自动验证**：所有受保护的接口会自动验证 Cookie 中的 JWT Token
+
+#### 方式 2：直接 AUTH_CODE 认证（推荐用于API调用）
+1. **直接认证**：在每个API请求中直接提供 AUTH_CODE
+2. **灵活方式**：支持通过请求头或请求体传递 AUTH_CODE
+3. **无状态**：不需要维护会话状态，适合API集成
+
+### AUTH_CODE 传递方式
+
+当使用直接 AUTH_CODE 认证时，支持以下传递方式：
+
+#### 1. Authorization Header
+```http
+Authorization: Bearer your-auth-code
+```
+
+#### 2. 自定义 Header
+```http
+x-auth-code: your-auth-code
+```
+
+#### 3. 请求体（仅POST/PUT/PATCH请求）
+```json
+{
+  "authCode": "your-auth-code",
+  "otherData": "..."
+}
+```
+
 ### 身份验证
 
-#### 登录
+#### 🔑 登录（获取 Token）
 ```http
 POST /api/auth/login
 Content-Type: application/json
@@ -138,46 +176,429 @@ Content-Type: application/json
 }
 ```
 
-#### 验证身份
-```http
-GET /api/auth/verify
-Authorization: Bearer <token>
+**响应示例：**
+```json
+{
+  "success": true,
+  "message": "登录成功"
+}
 ```
 
-#### 退出登录
+#### 🛡️ 验证身份（验证 Token 有效性）
+```http
+GET /api/auth/verify
+Cookie: auth-token=<jwt-token>
+```
+
+**响应示例：**
+```json
+{
+  "authenticated": true,
+  "expiresAt": 1706123456789
+}
+```
+
+#### 🚪 退出登录（清除 Token）
 ```http
 POST /api/auth/logout
+Cookie: auth-token=<jwt-token>
+```
+
+**响应示例：**
+```json
+{
+  "success": true,
+  "message": "退出登录成功"
+}
 ```
 
 ### 文件操作
 
-#### 上传文件
+> **⚠️ 以下所有接口都需要认证（JWT Token 或 AUTH_CODE 任选其一）**
+
+#### 📤 上传文件
+
+**方式 1：使用 JWT Token（Cookie认证）**
 ```http
 POST /api/upload
+Cookie: auth-token=<jwt-token>
 Content-Type: multipart/form-data
 
 files: File[]
 ```
 
-#### 获取文件列表
+**方式 2：使用 AUTH_CODE（Header认证）**
 ```http
-GET /api/files?page=1&limit=15&category=image&search=keyword
+POST /api/upload
+Authorization: Bearer your-auth-code
+Content-Type: multipart/form-data
+
+files: File[]
 ```
 
-#### 删除文件
+**方式 3：使用 AUTH_CODE（自定义Header）**
+```http
+POST /api/upload
+x-auth-code: your-auth-code
+Content-Type: multipart/form-data
+
+files: File[]
+```
+
+**响应示例：**
+```json
+{
+  "success": true,
+  "files": [
+    {
+      "id": "abc123",
+      "name": "image.jpg",
+      "url": "/uploads/image_1706123456_abc123.jpg",
+      "size": 1024000,
+      "type": "image/jpeg",
+      "category": "image",
+      "uploadedAt": "2025-01-15T10:30:00.000Z"
+    }
+  ],
+  "message": "Successfully uploaded 1 file(s)"
+}
+```
+
+#### 📋 获取文件列表
+
+**使用 JWT Token：**
+```http
+GET /api/files?page=1&limit=15&category=image&search=keyword&sortBy=uploadedAt&sortOrder=DESC
+Cookie: auth-token=<jwt-token>
+```
+
+**使用 AUTH_CODE：**
+```http
+GET /api/files?page=1&limit=15&category=image&search=keyword&sortBy=uploadedAt&sortOrder=DESC
+Authorization: Bearer your-auth-code
+```
+
+**查询参数：**
+- `page`: 页码（默认：1）
+- `limit`: 每页数量（默认：20）
+- `category`: 文件分类过滤（可选）
+- `search`: 文件名搜索（可选）
+- `sortBy`: 排序字段（uploadedAt/name/size，默认：uploadedAt）
+- `sortOrder`: 排序顺序（ASC/DESC，默认：DESC）
+- `stats`: 是否返回统计信息（true/false，默认：false）
+
+**响应示例：**
+```json
+{
+  "success": true,
+  "files": [...],
+  "pagination": {
+    "currentPage": 1,
+    "totalPages": 5,
+    "totalFiles": 73,
+    "limit": 15,
+    "hasNext": true,
+    "hasPrev": false
+  },
+  "stats": {
+    "totalFiles": 73,
+    "totalSize": 1073741824,
+    "categories": {
+      "image": 45,
+      "document": 12,
+      "video": 8,
+      "audio": 5,
+      "archive": 3
+    }
+  }
+}
+```
+
+#### 📄 获取单个文件信息
+```http
+GET /api/files/[id]
+Cookie: auth-token=<jwt-token>
+# 或
+Authorization: Bearer your-auth-code
+```
+
+**响应示例：**
+```json
+{
+  "success": true,
+  "file": {
+    "id": "abc123",
+    "name": "image.jpg",
+    "url": "/uploads/image_1706123456_abc123.jpg",
+    "size": 1024000,
+    "type": "image/jpeg",
+    "category": "image",
+    "uploadedAt": "2025-01-15T10:30:00.000Z"
+  }
+}
+```
+
+#### 🗑️ 删除单个文件
 ```http
 DELETE /api/files/[id]
+Cookie: auth-token=<jwt-token>
+# 或
+Authorization: Bearer your-auth-code
 ```
 
-#### 批量删除
+**响应示例：**
+```json
+{
+  "success": true,
+  "message": "File image.jpg deleted successfully"
+}
+```
+
+#### 🗂️ 批量删除文件
+
+**使用 JWT Token：**
 ```http
 POST /api/files/batch-delete
+Cookie: auth-token=<jwt-token>
 Content-Type: application/json
 
 {
   "fileIds": ["id1", "id2", "id3"]
 }
 ```
+
+**使用 AUTH_CODE（Header方式）：**
+```http
+POST /api/files/batch-delete
+Authorization: Bearer your-auth-code
+Content-Type: application/json
+
+{
+  "fileIds": ["id1", "id2", "id3"]
+}
+```
+
+**使用 AUTH_CODE（请求体方式）：**
+```http
+POST /api/files/batch-delete
+Content-Type: application/json
+
+{
+  "authCode": "your-auth-code",
+  "fileIds": ["id1", "id2", "id3"]
+}
+```
+
+**响应示例：**
+```json
+{
+  "success": true,
+  "message": "Successfully deleted 2 files",
+  "results": {
+    "successful": ["id1", "id2"],
+    "failed": [
+      {
+        "id": "id3",
+        "error": "File not found"
+      }
+    ],
+    "totalSize": 2048000
+  }
+}
+```
+
+### 错误响应
+
+当请求未认证或认证失败时，所有受保护的接口将返回：
+
+**未找到认证信息：**
+```json
+{
+  "error": "未找到认证token或AUTH_CODE，请先登录或提供有效的AUTH_CODE"
+}
+```
+
+**JWT Token过期：**
+```json
+{
+  "error": "认证已过期，请重新登录或使用AUTH_CODE"
+}
+```
+
+**无效的认证信息：**
+```json
+{
+  "error": "无效的认证token，请重新登录或使用AUTH_CODE"
+}
+```
+
+**AUTH_CODE错误：**
+```json
+{
+  "error": "授权码无效"
+}
+```
+
+### 使用示例
+
+#### JavaScript/TypeScript 客户端示例
+
+**方式 1：使用 JWT Token（推荐用于Web应用）**
+
+```javascript
+// 1. 登录获取 Token
+async function login(authCode) {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include', // 重要：包含 cookies
+    body: JSON.stringify({ authCode })
+  });
+  
+  return await response.json();
+}
+
+// 2. 上传文件（使用JWT Token）
+async function uploadFiles(files) {
+  const formData = new FormData();
+  files.forEach(file => formData.append('files', file));
+  
+  const response = await fetch('/api/upload', {
+    method: 'POST',
+    credentials: 'include', // 重要：包含认证 cookie
+    body: formData
+  });
+  
+  return await response.json();
+}
+```
+
+**方式 2：使用 AUTH_CODE（推荐用于API集成）**
+
+```javascript
+// 直接使用 AUTH_CODE 上传文件
+async function uploadFilesWithAuthCode(files, authCode) {
+  const formData = new FormData();
+  files.forEach(file => formData.append('files', file));
+  
+  const response = await fetch('/api/upload', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${authCode}` // 直接传递 AUTH_CODE
+    },
+    body: formData
+  });
+  
+  return await response.json();
+}
+
+// 使用 AUTH_CODE 获取文件列表
+async function getFilesWithAuthCode(authCode, page = 1, category = '') {
+  const params = new URLSearchParams({ page, limit: 15 });
+  if (category) params.append('category', category);
+  
+  const response = await fetch(`/api/files?${params}`, {
+    headers: {
+      'Authorization': `Bearer ${authCode}` // 直接传递 AUTH_CODE
+    }
+  });
+  
+  return await response.json();
+}
+
+// 使用 AUTH_CODE 批量删除文件
+async function batchDeleteWithAuthCode(authCode, fileIds) {
+  const response = await fetch('/api/files/batch-delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${authCode}` // 通过Header传递
+    },
+    body: JSON.stringify({ fileIds })
+  });
+  
+  return await response.json();
+}
+
+// 或者通过请求体传递 AUTH_CODE
+async function batchDeleteWithAuthCodeInBody(authCode, fileIds) {
+  const response = await fetch('/api/files/batch-delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ 
+      authCode, // 通过请求体传递
+      fileIds 
+    })
+  });
+  
+  return await response.json();
+}
+```
+
+#### cURL 示例
+
+**方式 1：使用 JWT Token（Cookie认证）**
+
+```bash
+# 1. 登录获取JWT Token
+curl -X POST http://localhost:3001/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"authCode":"your-auth-code"}' \
+  -c cookies.txt
+
+# 2. 使用Cookie上传文件
+curl -X POST http://localhost:3001/api/upload \
+  -b cookies.txt \
+  -F "files=@/path/to/your/file.jpg"
+
+# 3. 使用Cookie获取文件列表
+curl -X GET "http://localhost:3001/api/files?page=1&limit=10" \
+  -b cookies.txt
+```
+
+**方式 2：使用 AUTH_CODE（直接认证）**
+
+```bash
+# 1. 使用 Authorization Header 上传文件
+curl -X POST http://localhost:3001/api/upload \
+  -H "Authorization: Bearer your-auth-code" \
+  -F "files=@/path/to/your/file.jpg"
+
+# 2. 使用自定义Header上传文件
+curl -X POST http://localhost:3001/api/upload \
+  -H "x-auth-code: your-auth-code" \
+  -F "files=@/path/to/your/file.jpg"
+
+# 3. 使用 AUTH_CODE 获取文件列表
+curl -X GET "http://localhost:3001/api/files?page=1&limit=10" \
+  -H "Authorization: Bearer your-auth-code"
+
+# 4. 使用 AUTH_CODE 删除文件
+curl -X DELETE http://localhost:3001/api/files/your-file-id \
+  -H "Authorization: Bearer your-auth-code"
+
+# 5. 使用 AUTH_CODE 批量删除（Header方式）
+curl -X POST http://localhost:3001/api/files/batch-delete \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer your-auth-code" \
+  -d '{"fileIds":["id1","id2","id3"]}'
+
+# 6. 使用 AUTH_CODE 批量删除（请求体方式）
+curl -X POST http://localhost:3001/api/files/batch-delete \
+  -H "Content-Type: application/json" \
+  -d '{"authCode":"your-auth-code","fileIds":["id1","id2","id3"]}'
+```
+
+### 认证方式选择建议
+
+- **Web 应用开发**：使用 JWT Token 方式，更安全且用户体验更好
+- **API 集成/脚本**：使用 AUTH_CODE 方式，更简单且无状态
+- **移动应用**：可根据需求选择，JWT Token 适合长期会话
+- **第三方集成**：推荐 AUTH_CODE 方式，避免会话管理复杂性
 
 ## 🚀 部署指南
 

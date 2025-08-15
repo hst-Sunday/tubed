@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getFileById, deleteFile } from "@/lib/database"
+import { verifyAuth } from "@/lib/auth-middleware"
 import path from "path"
 import { unlink } from "fs/promises"
 
@@ -9,6 +10,11 @@ export async function GET(
 ) {
   const params = await context.params
   try {
+    // 验证用户身份
+    const authResult = await verifyAuth(request)
+    if (!authResult.success) {
+      return authResult.response!
+    }
     const file = getFileById(params.id)
     
     if (!file) {
@@ -40,6 +46,11 @@ export async function DELETE(
 ) {
   const params = await context.params
   try {
+    // 验证用户身份
+    const authResult = await verifyAuth(request)
+    if (!authResult.success) {
+      return authResult.response!
+    }
     // 先获取文件信息
     const file = getFileById(params.id)
     

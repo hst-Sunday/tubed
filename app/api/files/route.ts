@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getFiles, getFileStats, searchFiles } from "@/lib/database"
+import { verifyAuth } from "@/lib/auth-middleware"
 // 导入迁移模块以确保在首次使用数据库时执行迁移
 import "@/lib/migrate"
 
 export async function GET(request: NextRequest) {
   try {
+    // 验证用户身份
+    const authResult = await verifyAuth(request)
+    if (!authResult.success) {
+      return authResult.response!
+    }
+
     const { searchParams } = new URL(request.url)
     
     // 获取查询参数
