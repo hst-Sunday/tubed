@@ -349,7 +349,7 @@ export default function DashboardPage() {
             {/* 搜索和筛选 */}
             <Card className="p-6 neon-glow holographic">
               <div className="space-y-4">
-                <form onSubmit={handleSearch} className="flex space-x-4">
+                <form onSubmit={handleSearch} className="flex space-x-4 items-center">
                   <div className="flex-1 relative">
                     <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <input
