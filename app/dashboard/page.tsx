@@ -26,8 +26,8 @@ import {
 } from "@/components/ui/pagination"
 import { FileRecord, FileStats } from "@/lib/database"
 import { FILE_CATEGORIES } from "@/lib/file-types"
-import { Search, Home, LogOut, RefreshCw, BarChart3 } from "lucide-react"
-import { Toaster } from "sonner"
+import { Search, Home, LogOut, RefreshCw, BarChart3, CheckSquare, Square, Trash2 } from "lucide-react"
+import { Toaster, toast } from "sonner"
 import Link from "next/link"
 
 export default function DashboardPage() {
@@ -42,6 +42,12 @@ export default function DashboardPage() {
   const [sortBy, setSortBy] = useState<'uploadedAt' | 'name' | 'size'>('uploadedAt')
   const [sortOrder, setSortOrder] = useState<'ASC' | 'DESC'>('DESC')
   const [isLogoutDialogOpen, setIsLogoutDialogOpen] = useState(false)
+
+  // 批量操作状态
+  const [selectionMode, setSelectionMode] = useState(false)
+  const [selectedFiles, setSelectedFiles] = useState<Set<string>>(new Set())
+  const [isBatchDeleting, setIsBatchDeleting] = useState(false)
+  const [isBatchDeleteDialogOpen, setIsBatchDeleteDialogOpen] = useState(false)
 
   const filesPerPage = 15
 
@@ -98,6 +104,28 @@ export default function DashboardPage() {
     fetchStats()
   }, [])
 
+  // 键盘快捷键支持
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      // Ctrl+A 全选
+      if (event.ctrlKey && event.key === 'a' && selectionMode) {
+        event.preventDefault()
+        selectAllFiles()
+      }
+      // ESC 退出选择模式
+      if (event.key === 'Escape' && selectionMode) {
+        toggleSelectionMode()
+      }
+      // Delete 键删除选中文件
+      if (event.key === 'Delete' && selectionMode && selectedFiles.size > 0) {
+        setIsBatchDeleteDialogOpen(true)
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [selectionMode, selectedFiles]) // eslint-disable-line react-hooks/exhaustive-deps
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
   }
@@ -118,6 +146,74 @@ export default function DashboardPage() {
     window.location.href = "/login"
   }
 
+  // 批量操作函数
+  const toggleSelectionMode = () => {
+    setSelectionMode(!selectionMode)
+    setSelectedFiles(new Set()) // 清空选择
+  }
+
+  const handleFileSelection = (fileId: string, selected: boolean) => {
+    const newSelection = new Set(selectedFiles)
+    if (selected) {
+      newSelection.add(fileId)
+    } else {
+      newSelection.delete(fileId)
+    }
+    setSelectedFiles(newSelection)
+  }
+
+  const selectAllFiles = () => {
+    const allFileIds = new Set(files.map(file => file.id))
+    setSelectedFiles(allFileIds)
+  }
+
+  const clearSelection = () => {
+    setSelectedFiles(new Set())
+  }
+
+  const handleBatchDelete = async () => {
+    if (selectedFiles.size === 0) return
+
+    setIsBatchDeleting(true)
+    try {
+      const response = await fetch('/api/files/batch-delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          fileIds: Array.from(selectedFiles)
+        }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        // 从列表中移除删除成功的文件
+        setFiles(prev => prev.filter(file => !data.results.successful.includes(file.id)))
+        setSelectedFiles(new Set()) // 清空选择
+        setIsBatchDeleteDialogOpen(false)
+
+        // 显示成功消息
+        toast.success(`成功删除 ${data.results.successful.length} 个文件`)
+
+        if (data.results.failed.length > 0) {
+          toast.error(`${data.results.failed.length} 个文件删除失败`)
+          console.warn('Some files failed to delete:', data.results.failed)
+        }
+
+        // 刷新统计信息
+        fetchStats()
+      } else {
+        toast.error('批量删除失败')
+      }
+    } catch (error) {
+      console.error('Batch delete failed:', error)
+      toast.error('批量删除过程中出现错误')
+    } finally {
+      setIsBatchDeleting(false)
+    }
+  }
+
   const getCategoryName = (category: string) => {
     switch (category) {
       case FILE_CATEGORIES.IMAGE: return '图片'
@@ -135,10 +231,10 @@ export default function DashboardPage() {
   const formatFileSize = (bytes: number): string => {
     const sizes = ['B', 'KB', 'MB', 'GB']
     if (bytes === 0) return '0 B'
-    
+
     const i = Math.floor(Math.log(bytes) / Math.log(1024))
     const size = bytes / Math.pow(1024, i)
-    
+
     return `${size.toFixed(i === 0 ? 0 : 2)} ${sizes[i]}`
   }
 
@@ -160,7 +256,7 @@ export default function DashboardPage() {
                 <div className="w-px h-6 bg-border"></div>
                 <h1 className="text-xl font-[var(--font-dm-sans)] text-primary text-glow">文件管理台</h1>
               </div>
-              
+
               <div className="flex items-center space-x-4">
                 <Button
                   variant="outline"
@@ -172,7 +268,7 @@ export default function DashboardPage() {
                   <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                   刷新
                 </Button>
-                
+
                 <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
                   <DialogTrigger asChild>
                     <Button variant="destructive" size="sm" className="neon-glow-red">
@@ -223,7 +319,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="text-2xl font-bold text-primary text-glow">{stats.totalFiles}</div>
                 </Card>
-                
+
                 <Card className="p-4 text-center neon-glow holographic">
                   <div className="flex items-center justify-center space-x-2 mb-2">
                     <BarChart3 className="w-5 h-5 text-secondary" />
@@ -269,55 +365,118 @@ export default function DashboardPage() {
                   </Button>
                 </form>
 
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    variant={selectedCategory === "" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => {
-                      setSelectedCategory("")
-                      setCurrentPage(1)
-                    }}
-                    className="text-xs"
-                  >
-                    全部
-                  </Button>
-                  {stats && Object.entries(stats.categories).map(([category, count]) => (
+                <div className="flex flex-wrap gap-2 justify-between">
+                  <div className="flex flex-wrap gap-2">
                     <Button
-                      key={category}
-                      variant={selectedCategory === category ? "default" : "outline"}
+                      variant={selectedCategory === "" ? "default" : "outline"}
                       size="sm"
                       onClick={() => {
-                        setSelectedCategory(category)
+                        setSelectedCategory("")
                         setCurrentPage(1)
                       }}
                       className="text-xs"
                     >
-                      {getCategoryName(category)} ({count})
+                      全部
                     </Button>
-                  ))}
+                    {stats && Object.entries(stats.categories).map(([category, count]) => (
+                      <Button
+                        key={category}
+                        variant={selectedCategory === category ? "default" : "outline"}
+                        size="sm"
+                        onClick={() => {
+                          setSelectedCategory(category)
+                          setCurrentPage(1)
+                        }}
+                        className="text-xs"
+                      >
+                        {getCategoryName(category)} ({count})
+                      </Button>
+                    ))}
+                  </div>
+
+                  <div className="flex flex-wrap gap-2">
+                    <select
+                      value={sortBy}
+                      onChange={(e) => setSortBy(e.target.value as 'uploadedAt' | 'name' | 'size')}
+                      className="px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                    >
+                      <option value="uploadedAt">按上传时间</option>
+                      <option value="name">按文件名</option>
+                      <option value="size">按文件大小</option>
+                    </select>
+                    <select
+                      value={sortOrder}
+                      onChange={(e) => setSortOrder(e.target.value as 'ASC' | 'DESC')}
+                      className="px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                    >
+                      <option value="DESC">降序</option>
+                      <option value="ASC">升序</option>
+                    </select>
+                  </div>
                 </div>
 
-                <div className="flex space-x-2">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as 'uploadedAt' | 'name' | 'size')}
-                    className="px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-                  >
-                    <option value="uploadedAt">按上传时间</option>
-                    <option value="name">按文件名</option>
-                    <option value="size">按文件大小</option>
-                  </select>
-                  <select
-                    value={sortOrder}
-                    onChange={(e) => setSortOrder(e.target.value as 'ASC' | 'DESC')}
-                    className="px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-                  >
-                    <option value="DESC">降序</option>
-                    <option value="ASC">升序</option>
-                  </select>
+                <div className="w-full space-x-2">
+                  {/* 批量操作工具栏 */}
+                  {files.length > 0 && (
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-4">
+                        <Button
+                          variant={selectionMode ? "default" : "outline"}
+                          onClick={toggleSelectionMode}
+                          className={selectionMode ? "neon-glow-cyan" : "neon-glow"}
+                        >
+                          {selectionMode ? <CheckSquare className="w-4 h-4 mr-2" /> : <Square className="w-4 h-4 mr-2" />}
+                          {selectionMode ? "退出选择" : "选择模式"}
+                        </Button>
+
+                        {selectionMode && (
+                          <>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={selectAllFiles}
+                              disabled={selectedFiles.size === files.length}
+                              className="neon-glow-green"
+                            >
+                              全选
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={clearSelection}
+                              disabled={selectedFiles.size === 0}
+                              className="neon-glow-blue"
+                            >
+                              清空
+                            </Button>
+                          </>
+                        )}
+                      </div>
+
+                      {selectionMode && selectedFiles.size > 0 && (
+                        <div className="flex items-center space-x-4">
+                          <span className="text-sm text-muted-foreground">
+                            已选择 {selectedFiles.size} 个文件
+                          </span>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => setIsBatchDeleteDialogOpen(true)}
+                            className="neon-glow-red"
+                          >
+                            <Trash2 className="w-4 h-4 mr-2" />
+                            批量删除
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
                 </div>
               </div>
             </Card>
+
+
 
             {/* 文件网格 */}
             {loading ? (
@@ -331,6 +490,9 @@ export default function DashboardPage() {
                     key={file.id}
                     file={file}
                     onDelete={handleFileDelete}
+                    selectionMode={selectionMode}
+                    isSelected={selectedFiles.has(file.id)}
+                    onSelectionChange={handleFileSelection}
                   />
                 ))}
               </div>
@@ -372,7 +534,7 @@ export default function DashboardPage() {
                         className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'neon-glow-green'}
                       />
                     </PaginationItem>
-                    
+
                     {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
                       let pageNum
                       if (totalPages <= 7) {
@@ -426,6 +588,55 @@ export default function DashboardPage() {
             )}
           </div>
         </main>
+
+        {/* 批量删除确认对话框 */}
+        <Dialog open={isBatchDeleteDialogOpen} onOpenChange={setIsBatchDeleteDialogOpen}>
+          <DialogContent className="neon-glow holographic">
+            <DialogHeader>
+              <DialogTitle className="text-center text-glow">批量删除文件</DialogTitle>
+              <DialogDescription className="text-center">
+                您确定要删除选中的 {selectedFiles.size} 个文件吗？此操作无法撤销。
+              </DialogDescription>
+            </DialogHeader>
+            <div className="max-h-60 overflow-y-auto">
+              <div className="space-y-2">
+                {Array.from(selectedFiles).slice(0, 10).map((fileId) => {
+                  const file = files.find(f => f.id === fileId)
+                  return file ? (
+                    <div key={fileId} className="flex items-center space-x-3 p-2 bg-background/50 rounded">
+                      <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
+                      <span className="text-sm truncate">{file.name}</span>
+                      <span className="text-xs text-muted-foreground">{formatFileSize(file.size)}</span>
+                    </div>
+                  ) : null
+                })}
+                {selectedFiles.size > 10 && (
+                  <div className="text-center text-sm text-muted-foreground">
+                    ... 以及其他 {selectedFiles.size - 10} 个文件
+                  </div>
+                )}
+              </div>
+            </div>
+            <DialogFooter className="flex-col sm:flex-row gap-2">
+              <Button
+                variant="outline"
+                onClick={() => setIsBatchDeleteDialogOpen(false)}
+                disabled={isBatchDeleting}
+                className="neon-glow-green"
+              >
+                取消
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={handleBatchDelete}
+                disabled={isBatchDeleting}
+                className="neon-glow-red"
+              >
+                {isBatchDeleting ? '删除中...' : `确定删除 ${selectedFiles.size} 个文件`}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </AuthGuard>
   )

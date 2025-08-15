@@ -5,6 +5,7 @@ import Image from "next/image"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import {
   Dialog,
   DialogContent,
@@ -21,9 +22,18 @@ import { toast } from "sonner"
 interface FileCardProps {
   file: FileRecord
   onDelete?: (id: string) => void
+  selectionMode?: boolean
+  isSelected?: boolean
+  onSelectionChange?: (fileId: string, selected: boolean) => void
 }
 
-export function FileCard({ file, onDelete }: FileCardProps) {
+export function FileCard({ 
+  file, 
+  onDelete, 
+  selectionMode = false, 
+  isSelected = false, 
+  onSelectionChange 
+}: FileCardProps) {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [imageLoaded, setImageLoaded] = useState(false)
@@ -36,8 +46,16 @@ export function FileCard({ file, onDelete }: FileCardProps) {
   const isImage = file.category === 'image'
 
   const handleImageClick = () => {
-    if (isImage && imageLoaded && !imageError) {
+    if (selectionMode) {
+      handleSelectionToggle()
+    } else if (isImage && imageLoaded && !imageError) {
       setIsImageViewerOpen(true)
+    }
+  }
+
+  const handleSelectionToggle = () => {
+    if (onSelectionChange) {
+      onSelectionChange(file.id, !isSelected)
     }
   }
 
@@ -120,10 +138,21 @@ export function FileCard({ file, onDelete }: FileCardProps) {
     if (isImage) {
       return (
         <div
-          className={`relative w-full h-48 bg-background/50 rounded-lg overflow-hidden group-hover:bg-background/70 transition-colors ${imageLoaded && !imageError ? 'cursor-pointer' : ''
-            }`}
+          className={`relative w-full h-48 bg-background/50 rounded-lg overflow-hidden group-hover:bg-background/70 transition-colors ${
+            selectionMode ? 'cursor-pointer' : (imageLoaded && !imageError ? 'cursor-pointer' : '')
+          }`}
           onClick={handleImageClick}
         >
+          {/* 选择模式复选框 */}
+          {selectionMode && (
+            <div className="absolute top-2 left-2 z-20">
+              <Checkbox
+                checked={isSelected}
+                onCheckedChange={() => handleSelectionToggle()}
+                className="w-5 h-5 border-2 border-cyan-400 data-[state=checked]:bg-cyan-400 data-[state=checked]:border-cyan-400"
+              />
+            </div>
+          )}
           {!imageError ? (
             <>
               <Image
@@ -162,7 +191,7 @@ export function FileCard({ file, onDelete }: FileCardProps) {
                 <div className="text-cyan-400 text-sm font-mono">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 bg-cyan-400 rounded-full animate-pulse"></div>
-                    PREVIEW_MODE
+                    <span className="truncate">{file.name}</span>
                   </div>
                 </div>
                 {imageLoaded && !imageError && (
@@ -177,7 +206,22 @@ export function FileCard({ file, onDelete }: FileCardProps) {
 
     // 非图片文件显示图标
     return (
-      <div className="relative w-full h-48 bg-background/50 rounded-lg overflow-hidden flex flex-col items-center justify-center space-y-3">
+      <div 
+        className={`relative w-full h-48 bg-background/50 rounded-lg overflow-hidden flex flex-col items-center justify-center space-y-3 ${
+          selectionMode ? 'cursor-pointer' : ''
+        }`}
+        onClick={selectionMode ? handleSelectionToggle : undefined}
+      >
+        {/* 选择模式复选框 */}
+        {selectionMode && (
+          <div className="absolute top-2 left-2 z-20">
+            <Checkbox
+              checked={isSelected}
+              onCheckedChange={() => handleSelectionToggle()}
+              className="w-5 h-5 border-2 border-cyan-400 data-[state=checked]:bg-cyan-400 data-[state=checked]:border-cyan-400"
+            />
+          </div>
+        )}
         <div className={`w-16 h-16 rounded-xl bg-background/80 flex items-center justify-center ${getCategoryColor(file.category)} float`}>
           <IconComponent className="w-8 h-8" />
         </div>
@@ -193,7 +237,9 @@ export function FileCard({ file, onDelete }: FileCardProps) {
 
   return (
     <>
-      <Card className="overflow-hidden neon-glow holographic hover:scale-105 transition-all duration-300 group py-0">
+      <Card className={`overflow-hidden neon-glow holographic hover:scale-105 transition-all duration-300 group py-0 ${
+        isSelected ? 'ring-2 ring-cyan-400 bg-cyan-400/10' : ''
+      }`}>
         {/* 预览区域 */}
         <PreviewSection />
 
