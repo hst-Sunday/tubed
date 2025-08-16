@@ -8,10 +8,24 @@ let isRedirecting = false
  * 统一的fetch包装器，自动处理401响应
  */
 export async function apiRequest(url: string, options: RequestInit = {}): Promise<Response> {
-  // 确保包含认证cookie
+  // 自动添加Authorization header和认证cookie
   const requestOptions: RequestInit = {
     credentials: "include",
     ...options,
+    headers: {
+      ...options.headers,
+    }
+  }
+
+  // 从localStorage获取token并添加到Authorization header
+  if (typeof window !== 'undefined') {
+    const token = localStorage.getItem('auth-token')
+    if (token) {
+      requestOptions.headers = {
+        ...requestOptions.headers,
+        'Authorization': `Bearer ${token}`
+      }
+    }
   }
 
   try {
@@ -26,7 +40,9 @@ export async function apiRequest(url: string, options: RequestInit = {}): Promis
       
       isRedirecting = true
       
-      // 清除本地认证状态
+      // 清除localStorage中的token
+      localStorage.removeItem('auth-token')
+      
       // 触发全局事件，通知useAuth hook更新状态
       window.dispatchEvent(new CustomEvent('auth-401'))
       

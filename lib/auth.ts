@@ -57,6 +57,10 @@ export function useAuth() {
       const data = await response.json()
 
       if (response.ok) {
+        // 保存token到localStorage
+        if (typeof window !== 'undefined' && data.token) {
+          localStorage.setItem('auth-token', data.token)
+        }
         setIsAuthenticated(true)
         return { success: true }
       } else {
@@ -76,6 +80,10 @@ export function useAuth() {
     } catch (error) {
       console.error("Logout failed:", error)
     } finally {
+      // 清除localStorage中的token
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auth-token')
+      }
       setIsAuthenticated(false)
     }
   }

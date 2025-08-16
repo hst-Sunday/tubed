@@ -9,24 +9,14 @@ export async function POST(request: NextRequest) {
       return authResult.response!
     }
 
-    // 清除认证cookie
-    const response = NextResponse.json(
+    // 直接返回成功响应，前端负责清除localStorage中的token
+    return NextResponse.json(
       { 
         success: true,
         message: "退出登录成功" 
       },
       { status: 200 }
     )
-
-    // 删除cookie
-    response.cookies.set("auth-token", "", {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 0 // 立即过期
-    })
-
-    return response
 
   } catch (error) {
     console.error("Logout error:", error)

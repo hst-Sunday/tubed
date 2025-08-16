@@ -36,23 +36,15 @@ export async function POST(request: NextRequest) {
       }
     )
 
-    // 设置httpOnly cookie
-    const response = NextResponse.json(
+    // 直接返回token，让前端保存到localStorage
+    return NextResponse.json(
       { 
         success: true,
+        token: token,
         message: "登录成功" 
       },
       { status: 200 }
     )
-
-    response.cookies.set("auth-token", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 24 * 60 * 60 // 24小时
-    })
-
-    return response
 
   } catch (error) {
     console.error("Login error:", error)

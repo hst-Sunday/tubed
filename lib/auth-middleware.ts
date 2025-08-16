@@ -87,8 +87,16 @@ async function checkDirectAuthCode(request: NextRequest): Promise<AuthResult> {
  */
 function verifyJWTToken(request: NextRequest): AuthResult {
   try {
-    // 从cookie中获取token
-    const token = request.cookies.get("auth-token")?.value
+    // 优先从Authorization header获取token，fallback到cookie
+    let token: string | undefined
+    
+    const authHeader = request.headers.get("authorization")
+    if (authHeader?.startsWith("Bearer ")) {
+      token = authHeader.slice(7) // 移除 "Bearer " 前缀
+    } else {
+      // fallback到cookie方式（保持向后兼容）
+      token = request.cookies.get("auth-token")?.value
+    }
 
     if (!token) {
       return {
