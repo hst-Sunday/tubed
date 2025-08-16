@@ -1,6 +1,6 @@
 import packageJson from "@/package.json"
 
-interface VersionInfo {
+export interface VersionInfo {
   version: string
   buildTime?: string
   gitCommit?: string

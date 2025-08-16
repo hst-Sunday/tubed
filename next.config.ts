@@ -1,23 +1,29 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // 暂时禁用standalone模式进行测试
   output: 'standalone',
+  async rewrites() {
+    return [
+      {
+        source: '/uploads/:path*',
+        destination: '/api/images/:path*'
+      }
+    ]
+  },
   images: {
-    domains: ['localhost'],
+    unoptimized: true,
+    // 允许所有域名的图片（包括本地API路由）
     remotePatterns: [
       {
         protocol: 'http',
-        hostname: 'localhost',
-        port: '3001',
-        pathname: '/uploads/**',
+        hostname: '**',
       },
       {
-        protocol: 'https',
+        protocol: 'https', 
         hostname: '**',
-        pathname: '/uploads/**',
       },
     ],
-    unoptimized: false,
   },
 };
 

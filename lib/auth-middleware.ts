@@ -47,7 +47,6 @@ export async function verifyAuth(request: NextRequest): Promise<AuthResult> {
  * 支持从以下位置获取AUTH_CODE：
  * - Authorization header: "Bearer your-auth-code"
  * - x-auth-code header: "your-auth-code"  
- * - 请求体中的authCode字段（仅POST请求）
  */
 async function checkDirectAuthCode(request: NextRequest): Promise<AuthResult> {
   if (!AUTH_CODE) {
@@ -67,31 +66,10 @@ async function checkDirectAuthCode(request: NextRequest): Promise<AuthResult> {
     providedAuthCode = request.headers.get("x-auth-code")
   }
 
-  // 3. 从请求体获取（仅POST/PUT/PATCH请求）
-  if (!providedAuthCode && ["POST", "PUT", "PATCH"].includes(request.method)) {
-    try {
-      const contentType = request.headers.get("content-type") || ""
-      
-      // 如果是JSON请求体
-      if (contentType.includes("application/json")) {
-        const body = await request.text()
-        if (body) {
-          const jsonBody = JSON.parse(body)
-          providedAuthCode = jsonBody.authCode
-          
-          // 重构request以便后续使用（因为body已被读取）
-          const newRequest = new Request(request.url, {
-            method: request.method,
-            headers: request.headers,
-            body: body
-          })
-          // 注意：这里无法完全重构request，所以优先使用header方式
-        }
-      }
-    } catch (error) {
-      // 如果解析请求体失败，忽略此方式
-    }
-  }
+  // 注意：不从请求体读取AUTH_CODE，避免与后续API处理冲突
+  // 如需要在请求体中传递AUTH_CODE，请使用header方式：
+  // - Authorization: "Bearer your-auth-code"  
+  // - x-auth-code: "your-auth-code"
 
   // 验证AUTH_CODE
   if (providedAuthCode && providedAuthCode === AUTH_CODE) {

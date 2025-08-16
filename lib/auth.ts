@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import { apiRequest } from "./http-client"
 
 export function useAuth() {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null)
@@ -8,13 +9,25 @@ export function useAuth() {
 
   useEffect(() => {
     checkAuthStatus()
+
+    // 监听401事件，自动更新认证状态
+    const handle401 = () => {
+      setIsAuthenticated(false)
+    }
+
+    if (typeof window !== 'undefined') {
+      window.addEventListener('auth-401', handle401)
+      
+      return () => {
+        window.removeEventListener('auth-401', handle401)
+      }
+    }
   }, [])
 
   const checkAuthStatus = async () => {
     try {
-      const response = await fetch("/api/auth/verify", {
-        method: "GET",
-        credentials: "include" // 包含cookies
+      const response = await apiRequest("/api/auth/verify", {
+        method: "GET"
       })
       
       if (response.ok) {
@@ -33,12 +46,11 @@ export function useAuth() {
 
   const login = async (authCode: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      const response = await fetch("/api/auth/login", {
+      const response = await apiRequest("/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        credentials: "include", // 包含cookies
         body: JSON.stringify({ authCode }),
       })
 
@@ -58,9 +70,8 @@ export function useAuth() {
 
   const logout = async () => {
     try {
-      await fetch("/api/auth/logout", {
-        method: "POST",
-        credentials: "include"
+      await apiRequest("/api/auth/logout", {
+        method: "POST"
       })
     } catch (error) {
       console.error("Logout failed:", error)

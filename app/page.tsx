@@ -26,7 +26,9 @@ export default function HomePage() {
 
   const handleLogout = async () => {
     await logout()
-    window.location.href = "/login"
+    setIsLogoutDialogOpen(false)
+    // 强制跳转到登录页面
+    window.location.href = '/login'
   }
 
   return (

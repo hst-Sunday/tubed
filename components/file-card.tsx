@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import { apiDelete } from "@/lib/http-client"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -82,9 +83,7 @@ export function FileCard({
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      const response = await fetch(`/api/files/${file.id}`, {
-        method: 'DELETE',
-      })
+      const response = await apiDelete(`/api/files/${file.id}`)
 
       if (response.ok) {
         toast.success('文件删除成功')
@@ -165,9 +164,7 @@ export function FileCard({
                 onError={() => setImageError(true)}
                 sizes="(max-width: 640px) 90vw, (max-width: 768px) 45vw, (max-width: 1024px) 30vw, (max-width: 1280px) 24vw, 20vw"
                 loading="lazy"
-                quality={75}
-                placeholder="blur"
-                blurDataURL="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAhEAACAQMDBQAAAAAAAAAAAAABAgMABAUGIWGRkqGx0f/EABUBAQEAAAAAAAAAAAAAAAAAAAMF/8QAGhEAAgIDAAAAAAAAAAAAAAAAAAECEgMRkf/aAAwDAQACEQMRAD8AltJagyeH0AthI5xdrLcNM91BF5pX2HaH9bcfaSXWGaRmknyLli5xvqTk+lT2ngBGcMH0OWPApqTGV2DMa+pT6p+e+x/nVN+1DUKOX0hTUHBFhPr9TyKCf/Z"
+                unoptimized
               />
               {!imageLoaded && (
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -349,9 +346,9 @@ export function FileCard({
                       width={1200}
                       height={800}
                       className="max-w-full max-h-[85vh] min-h-[280px] w-auto h-auto object-contain rounded-lg"
-                      quality={90}
                       priority
                       sizes="90vw"
+                      unoptimized
                     />
 
                     {/* 图片信息覆盖层 */}

@@ -29,6 +29,7 @@ import { FILE_CATEGORIES } from "@/lib/file-types"
 import { Search, Home, LogOut, RefreshCw, BarChart3, CheckSquare, Square, Trash2 } from "lucide-react"
 import { Toaster, toast } from "sonner"
 import Link from "next/link"
+import { apiGet, apiPost } from "@/lib/http-client"
 
 export default function DashboardPage() {
   const { logout } = useAuth()
@@ -68,7 +69,7 @@ export default function DashboardPage() {
         params.append('category', selectedCategory)
       }
 
-      const response = await fetch(`/api/files?${params}`)
+      const response = await apiGet(`/api/files?${params}`)
       if (response.ok) {
         const data = await response.json()
         setFiles(data.files || [])
@@ -86,7 +87,7 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const response = await fetch('/api/files?stats=true')
+      const response = await apiGet('/api/files?stats=true')
       if (response.ok) {
         const data = await response.json()
         setStats(data.stats)
@@ -176,14 +177,8 @@ export default function DashboardPage() {
 
     setIsBatchDeleting(true)
     try {
-      const response = await fetch('/api/files/batch-delete', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          fileIds: Array.from(selectedFiles)
-        }),
+      const response = await apiPost('/api/files/batch-delete', {
+        fileIds: Array.from(selectedFiles)
       })
 
       if (response.ok) {

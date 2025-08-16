@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Upload, Check, X, Link, FileText, Code } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { apiPost } from "@/lib/http-client"
 import { 
   getAllAcceptedTypes, 
   getFileIconComponent, 
@@ -43,12 +44,7 @@ export function UploadZone() {
       }
 
       // Upload to server
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body: formData,
-        credentials: "include", // 携带认证cookie
-        // 不要手动设置Content-Type，让浏览器自动设置multipart/form-data边界
-      })
+      const response = await apiPost("/api/upload", formData)
 
       if (!response.ok) {
         throw new Error(`Upload failed: ${response.statusText}`)
