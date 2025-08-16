@@ -1,14 +1,14 @@
 services:
   tubed:
-    image: ghcr.io/hst-Sunday/tubed:latest
+    image: ghcr.io/hst-sunday/tubed:latest
     container_name: tubed-app
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - AUTH_CODE=${AUTH_CODE:-your-secret-auth-code}
-      - JWT_SECRET=${JWT_SECRET:-your-jwt-secret-key}
+      - AUTH_CODE=${AUTH_CODE}  
+      - JWT_SECRET=${JWT_SECRET}
     volumes:
       # Persistent data storage
       - tubed_data:/app/data
@@ -19,7 +19,7 @@ services:
     networks:
       - tubed-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/api/health"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -61,11 +61,11 @@ volumes:
     driver_opts:
       type: none
       o: bind
-      device: ${PWD}/public/uploads
+      device: ${PWD}/files
 
 networks:
   tubed-network:
     driver: bridge
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+        - subnet: 172.22.0.0/16
