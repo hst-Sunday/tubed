@@ -35,14 +35,36 @@ export async function POST(req: NextRequest) {
       return authResult.response!
     }
 
+    // 检查Content-Type头（用于调试）
+    const contentType = req.headers.get("content-type") || ""
+    console.log("Request Content-Type:", contentType)
+    
+    // 在Docker环境中，有时Content-Type可能不正确设置
+    // 我们尝试解析FormData，如果失败则报告具体错误
+    if (!contentType.includes("multipart/form-data") && contentType.length > 0) {
+      console.warn("Unexpected Content-Type for file upload:", contentType)
+      console.warn("Attempting to parse anyway for Docker compatibility...")
+    }
+
     // Ensure uploads directory exists
     const uploadsDir = path.join(process.cwd(), "public", "uploads")
     if (!existsSync(uploadsDir)) {
       await mkdir(uploadsDir, { recursive: true })
     }
 
-    // Parse form data using native FormData API
-    const formData = await req.formData()
+    // Parse form data with error handling for Docker environment
+    let formData: FormData
+    try {
+      formData = await req.formData()
+    } catch (error) {
+      console.error("FormData parsing error:", error)
+      console.error("Error details:", error)
+      return NextResponse.json(
+        { error: "Failed to parse form data. Please ensure files are properly formatted." },
+        { status: 400 }
+      )
+    }
+
     const files = formData.getAll("files") as File[]
 
     if (!files || files.length === 0) {

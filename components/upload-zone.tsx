@@ -46,6 +46,8 @@ export function UploadZone() {
       const response = await fetch("/api/upload", {
         method: "POST",
         body: formData,
+        credentials: "include", // 携带认证cookie
+        // 不要手动设置Content-Type，让浏览器自动设置multipart/form-data边界
       })
 
       if (!response.ok) {
