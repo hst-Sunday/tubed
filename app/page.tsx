@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { AuthGuard } from "@/components/auth-guard"
 import { useAuth } from "@/lib/auth"
+import { getAppNameWithVersion } from "@/lib/version"
 import { Zap, Shield, Rocket, LogOut, Settings } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
@@ -174,7 +175,7 @@ export default function HomePage() {
         <footer className="border-t border-border/50 mt-20 neon-glow-green">
           <div className="container mx-auto px-4 py-8">
             <div className="text-center text-muted-foreground">
-              <p className="text-sm">© 2025 Powered by TuBed</p>
+              <p className="text-sm">© 2025 Powered by {getAppNameWithVersion()}</p>
             </div>
           </div>
         </footer>
