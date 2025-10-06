@@ -234,8 +234,8 @@ export function FileCard({
 
   return (
     <>
-      <Card className={`overflow-hidden neon-glow holographic hover:scale-105 transition-all duration-300 group py-0 ${
-        isSelected ? 'ring-2 ring-cyan-400 bg-cyan-400/10' : ''
+      <Card className={`overflow-hidden hover:translate-x-1 hover:translate-y-1 transition-all duration-200 group py-0 ${
+        isSelected ? 'ring-4 ring-accent bg-accent/20' : ''
       }`}>
         {/* 预览区域 */}
         <PreviewSection />
@@ -273,48 +273,20 @@ export function FileCard({
           <div className="flex space-x-2 transition-opacity duration-200">
             <Button
               size="sm"
-              variant="outline"
+              variant="secondary"
               onClick={() => window.open(file.url, '_blank')}
-              className="flex-1 neon-glow-green text-xs"
+              className="flex-1"
             >
-              <ExternalLink className="w-3 h-3 mr-1" />
+              <ExternalLink className="w-4 h-4 mr-1" />
               查看
             </Button>
-            {/* <Button
-              size="sm"
-              variant="outline"
-              onClick={handleCopyUrl}
-              className="flex-1 neon-glow-blue text-xs"
-              disabled={copied === 'url'}
-            >
-              {copied === 'url' ? (
-                <CheckCircle className="w-3 h-3 mr-1" />
-              ) : (
-                <Copy className="w-3 h-3 mr-1" />
-              )}
-              {copied === 'url' ? '已复制' : '链接'}
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={handleCopyMarkdown}
-              className="flex-1 neon-glow-yellow text-xs"
-              disabled={copied === 'markdown'}
-            >
-              {copied === 'markdown' ? (
-                <CheckCircle className="w-3 h-3 mr-1" />
-              ) : (
-                <Copy className="w-3 h-3 mr-1" />
-              )}
-              {copied === 'markdown' ? '已复制' : 'MD'}
-            </Button> */}
             <Button
               size="sm"
               variant="destructive"
               onClick={() => setIsDeleteDialogOpen(true)}
-              className="neon-glow-red text-xs"
+              className="px-3"
             >
-              <Trash2 className="w-3 h-3" />
+              <Trash2 className="w-4 h-4" />
             </Button>
           </div>
         </div>
@@ -323,7 +295,7 @@ export function FileCard({
       {/* 图片灯箱 */}
       {isImage && (
         <Dialog open={isImageViewerOpen} onOpenChange={setIsImageViewerOpen}>
-          <DialogContent className="max-w-[90vw] max-h-[90vh] w-auto h-auto p-0 bg-background/95 backdrop-blur-md neon-glow holographic border-primary/50">
+          <DialogContent className="max-w-[90vw] max-h-[90vh] w-auto h-auto p-0 bg-background/95 backdrop-blur-md">
             <DialogHeader className="sr-only">
               <DialogTitle>图片预览 - {file.name}</DialogTitle>
             </DialogHeader>
@@ -331,9 +303,9 @@ export function FileCard({
               {/* 关闭按钮 */}
               <button
                 onClick={() => setIsImageViewerOpen(false)}
-                className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-background/80 backdrop-blur-sm flex items-center justify-center text-foreground hover:bg-destructive hover:text-destructive-foreground transition-colors neon-glow-red"
+                className="absolute top-4 right-4 z-10 w-12 h-12 rounded-xl bg-destructive backdrop-blur-sm flex items-center justify-center text-destructive-foreground hover:translate-x-1 hover:translate-y-1 transition-all border-[3px] border-black shadow-[6px_6px_0px_0px_#000000] hover:shadow-[4px_4px_0px_0px_#000000]"
               >
-                <X className="w-5 h-5" />
+                <X className="w-6 h-6 stroke-[3px]" />
               </button>
 
               {/* 图片显示区域 */}
@@ -373,10 +345,10 @@ export function FileCard({
       )}
 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent className="neon-glow holographic">
+        <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center text-glow">删除文件</DialogTitle>
-            <DialogDescription className="text-center">
+            <DialogTitle className="text-center">删除文件</DialogTitle>
+            <DialogDescription className="text-center font-semibold">
               确定要删除文件 &quot;{file.name}&quot; 吗？此操作无法撤销。
             </DialogDescription>
           </DialogHeader>
@@ -385,7 +357,6 @@ export function FileCard({
               variant="outline"
               onClick={() => setIsDeleteDialogOpen(false)}
               disabled={isDeleting}
-              className="neon-glow-green"
             >
               取消
             </Button>
@@ -393,7 +364,6 @@ export function FileCard({
               variant="destructive"
               onClick={handleDelete}
               disabled={isDeleting}
-              className="neon-glow-red"
             >
               {isDeleting ? '删除中...' : '确定删除'}
             </Button>

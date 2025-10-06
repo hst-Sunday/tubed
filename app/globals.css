@@ -44,76 +44,76 @@
 }
 
 :root {
-  /* 更鲜艳的赛博朋克色彩方案，提高文字对比度 */
-  --background: oklch(0.08 0.02 240); /* 更深的背景 */
-  --foreground: oklch(1 0 0); /* 纯白文字 */
-  --card: oklch(0.12 0.03 240); /* 卡片背景 */
-  --card-foreground: oklch(1 0 0); /* 卡片文字 */
-  --popover: oklch(0.12 0.03 240);
-  --popover-foreground: oklch(1 0 0);
-  --primary: oklch(0.75 0.35 25); /* 更鲜艳的橙色 */
-  --primary-foreground: oklch(0.05 0 0); /* 深色文字在亮色背景上 */
-  --secondary: oklch(0.75 0.25 150); /* 更鲜艳的绿色 */
-  --secondary-foreground: oklch(0.05 0 0);
-  --muted: oklch(0.25 0.03 240);
-  --muted-foreground: oklch(0.85 0 0); /* 更亮的次要文字 */
-  --accent: oklch(0.8 0.3 300); /* 鲜艳的紫色作为强调色 */
-  --accent-foreground: oklch(0.05 0 0);
-  --destructive: oklch(0.65 0.35 15); /* 更鲜艳的红色 */
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.4 0.05 240); /* 更亮的边框 */
-  --input: oklch(0.15 0.03 240);
-  --ring: oklch(0.75 0.35 25 / 0.6);
-  --chart-1: oklch(0.75 0.35 25);
-  --chart-2: oklch(0.75 0.25 150);
-  --chart-3: oklch(0.8 0.3 300);
-  --chart-4: oklch(0.65 0.35 15);
-  --chart-5: oklch(1 0 0);
-  --radius: 0.5rem;
-  --sidebar: oklch(0.12 0.03 240);
-  --sidebar-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(0.75 0.35 25);
-  --sidebar-primary-foreground: oklch(0.05 0 0);
-  --sidebar-accent: oklch(0.75 0.25 150);
-  --sidebar-accent-foreground: oklch(0.05 0 0);
-  --sidebar-border: oklch(0.4 0.05 240);
-  --sidebar-ring: oklch(0.75 0.35 25 / 0.6);
+  /* Brutalism 粗野主义配色方案 - 鲜艳撞色 */
+  --background: #FFFFFF; /* 白色背景 */
+  --foreground: #000000; /* 黑色文字 */
+  --card: #FFFFFF; /* 卡片背景 */
+  --card-foreground: #000000; /* 卡片文字 */
+  --popover: #FFFFFF;
+  --popover-foreground: #000000;
+  --primary: #FFE500; /* 鲜艳黄色 */
+  --primary-foreground: #000000; /* 黑色文字 */
+  --secondary: #00FF85; /* 鲜艳绿色 */
+  --secondary-foreground: #000000;
+  --muted: #F5F5F5;
+  --muted-foreground: #666666; /* 灰色次要文字 */
+  --accent: #00D1FF; /* 鲜艳青色 */
+  --accent-foreground: #000000;
+  --destructive: #FF006E; /* 鲜艳粉红色 */
+  --destructive-foreground: #FFFFFF;
+  --border: #000000; /* 黑色边框 */
+  --input: #FFFFFF;
+  --ring: #000000;
+  --chart-1: #FFE500;
+  --chart-2: #00FF85;
+  --chart-3: #00D1FF;
+  --chart-4: #FF006E;
+  --chart-5: #8B5CF6;
+  --radius: 0.75rem;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #FFE500;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #00FF85;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #000000;
+  --sidebar-ring: #000000;
 }
 
 .dark {
-  /* 保持一致的鲜艳色彩 */
-  --background: oklch(0.08 0.02 240);
-  --foreground: oklch(1 0 0);
-  --card: oklch(0.12 0.03 240);
-  --card-foreground: oklch(1 0 0);
-  --popover: oklch(0.12 0.03 240);
-  --popover-foreground: oklch(1 0 0);
-  --primary: oklch(0.75 0.35 25);
-  --primary-foreground: oklch(0.05 0 0);
-  --secondary: oklch(0.75 0.25 150);
-  --secondary-foreground: oklch(0.05 0 0);
-  --muted: oklch(0.25 0.03 240);
-  --muted-foreground: oklch(0.85 0 0);
-  --accent: oklch(0.8 0.3 300);
-  --accent-foreground: oklch(0.05 0 0);
-  --destructive: oklch(0.65 0.35 15);
-  --destructive-foreground: oklch(1 0 0);
-  --border: oklch(0.4 0.05 240);
-  --input: oklch(0.15 0.03 240);
-  --ring: oklch(0.75 0.35 25 / 0.6);
-  --chart-1: oklch(0.75 0.35 25);
-  --chart-2: oklch(0.75 0.25 150);
-  --chart-3: oklch(0.8 0.3 300);
-  --chart-4: oklch(0.65 0.35 15);
-  --chart-5: oklch(1 0 0);
-  --sidebar: oklch(0.12 0.03 240);
-  --sidebar-foreground: oklch(1 0 0);
-  --sidebar-primary: oklch(0.75 0.35 25);
-  --sidebar-primary-foreground: oklch(0.05 0 0);
-  --sidebar-accent: oklch(0.75 0.25 150);
-  --sidebar-accent-foreground: oklch(0.05 0 0);
-  --sidebar-border: oklch(0.4 0.05 240);
-  --sidebar-ring: oklch(0.75 0.35 25 / 0.6);
+  /* Brutalism 暗色模式 - 保持高对比度 */
+  --background: #FFFFFF;
+  --foreground: #000000;
+  --card: #FFFFFF;
+  --card-foreground: #000000;
+  --popover: #FFFFFF;
+  --popover-foreground: #000000;
+  --primary: #FFE500;
+  --primary-foreground: #000000;
+  --secondary: #00FF85;
+  --secondary-foreground: #000000;
+  --muted: #F5F5F5;
+  --muted-foreground: #666666;
+  --accent: #00D1FF;
+  --accent-foreground: #000000;
+  --destructive: #FF006E;
+  --destructive-foreground: #FFFFFF;
+  --border: #000000;
+  --input: #FFFFFF;
+  --ring: #000000;
+  --chart-1: #FFE500;
+  --chart-2: #00FF85;
+  --chart-3: #00D1FF;
+  --chart-4: #FF006E;
+  --chart-5: #8B5CF6;
+  --sidebar: #FFFFFF;
+  --sidebar-foreground: #000000;
+  --sidebar-primary: #FFE500;
+  --sidebar-primary-foreground: #000000;
+  --sidebar-accent: #00FF85;
+  --sidebar-accent-foreground: #000000;
+  --sidebar-border: #000000;
+  --sidebar-ring: #000000;
 }
 
 @theme inline {
@@ -165,405 +165,135 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+    font-weight: 600; /* Brutalism 风格使用更粗的字体 */
   }
 
-  /* 更鲜艳的网格背景 */
-  .cyberpunk-grid {
-    background-image: linear-gradient(rgba(255, 140, 0, 0.15) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(255, 140, 0, 0.15) 1px, transparent 1px),
-      radial-gradient(circle at 20% 50%, rgba(0, 255, 127, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 80% 20%, rgba(255, 20, 147, 0.08) 0%, transparent 50%),
-      radial-gradient(circle at 40% 80%, rgba(0, 255, 255, 0.06) 0%, transparent 50%);
-    background-size: 40px 40px, 40px 40px, 600px 600px, 500px 500px, 400px 400px;
-    animation: grid-float 15s ease-in-out infinite;
+  /* Brutalism 粗野主义样式 */
+  .brutalist-shadow {
+    box-shadow: 8px 8px 0px 0px #000000;
   }
 
-  @keyframes grid-float {
-    0%,
-    100% {
-      background-position: 0 0, 0 0, 0 0, 0 0, 0 0;
-    }
-    50% {
-      background-position: 20px 20px, 20px 20px, 300px 300px, 250px 250px, 200px 200px;
-    }
+  .brutalist-shadow-sm {
+    box-shadow: 4px 4px 0px 0px #000000;
   }
 
-  /* 更强烈的霓虹发光效果 */
+  .brutalist-shadow-lg {
+    box-shadow: 12px 12px 0px 0px #000000;
+  }
+
+  .brutalist-border {
+    border: 4px solid #000000;
+  }
+
+  .brutalist-border-thin {
+    border: 3px solid #000000;
+  }
+
+  /* Brutalism 风格的阴影效果 - 替代霓虹灯效果 */
   .neon-glow {
-    box-shadow: 0 0 8px rgba(255, 140, 0, 0.8), 0 0 16px rgba(255, 140, 0, 0.6), 0 0 24px rgba(255, 140, 0, 0.4), inset
-      0 0 8px rgba(255, 140, 0, 0.2);
-    animation: neon-pulse 2.5s ease-in-out infinite alternate;
+    box-shadow: 6px 6px 0px 0px #000000;
+    border: 3px solid #000000;
   }
 
   .neon-glow-green {
-    box-shadow: 0 0 8px rgba(0, 255, 127, 0.8), 0 0 16px rgba(0, 255, 127, 0.6), 0 0 24px rgba(0, 255, 127, 0.4), inset
-      0 0 8px rgba(0, 255, 127, 0.2);
-    animation: neon-pulse-green 2.5s ease-in-out infinite alternate;
+    box-shadow: 6px 6px 0px 0px #000000;
+    border: 3px solid #000000;
+    background-color: #00FF85;
   }
 
   .neon-glow-purple {
-    box-shadow: 0 0 8px rgba(255, 20, 147, 0.8), 0 0 16px rgba(255, 20, 147, 0.6), 0 0 24px rgba(255, 20, 147, 0.4),
-      inset 0 0 8px rgba(255, 20, 147, 0.2);
-    animation: neon-pulse-purple 2.5s ease-in-out infinite alternate;
+    box-shadow: 6px 6px 0px 0px #000000;
+    border: 3px solid #000000;
+    background-color: #8B5CF6;
   }
 
   .neon-glow-blue {
-    box-shadow: 0 0 8px rgba(0, 191, 255, 0.8), 0 0 16px rgba(0, 191, 255, 0.6), 0 0 24px rgba(0, 191, 255, 0.4),
-      inset 0 0 8px rgba(0, 191, 255, 0.2);
-    animation: neon-pulse-blue 2.5s ease-in-out infinite alternate;
+    box-shadow: 6px 6px 0px 0px #000000;
+    border: 3px solid #000000;
+    background-color: #00D1FF;
   }
 
   .neon-glow-yellow {
-    box-shadow: 0 0 8px rgba(255, 255, 0, 0.8), 0 0 16px rgba(255, 255, 0, 0.6), 0 0 24px rgba(255, 255, 0, 0.4),
-      inset 0 0 8px rgba(255, 255, 0, 0.2);
-    animation: neon-pulse-yellow 2.5s ease-in-out infinite alternate;
+    box-shadow: 6px 6px 0px 0px #000000;
+    border: 3px solid #000000;
+    background-color: #FFE500;
   }
 
   .neon-glow-red {
-    box-shadow: 0 0 8px rgba(255, 0, 0, 0.8), 0 0 16px rgba(255, 0, 0, 0.6), 0 0 24px rgba(255, 0, 0, 0.4),
-      inset 0 0 8px rgba(255, 0, 0, 0.2);
-    animation: neon-pulse-red 2.5s ease-in-out infinite alternate;
+    box-shadow: 6px 6px 0px 0px #000000;
+    border: 3px solid #000000;
+    background-color: #FF006E;
   }
 
   .neon-glow-cyan {
-    box-shadow: 0 0 8px rgba(0, 255, 255, 0.8), 0 0 16px rgba(0, 255, 255, 0.6), 0 0 24px rgba(0, 255, 255, 0.4),
-      inset 0 0 8px rgba(0, 255, 255, 0.2);
-    animation: neon-pulse-cyan 2.5s ease-in-out infinite alternate;
+    box-shadow: 6px 6px 0px 0px #000000;
+    border: 3px solid #000000;
+    background-color: #00D1FF;
   }
 
-  @keyframes neon-pulse {
-    0% {
-      box-shadow: 0 0 8px rgba(255, 140, 0, 0.8), 0 0 16px rgba(255, 140, 0, 0.6), 0 0 24px rgba(255, 140, 0, 0.4),
-        inset 0 0 8px rgba(255, 140, 0, 0.2);
-    }
-    100% {
-      box-shadow: 0 0 16px rgba(255, 140, 0, 1), 0 0 32px rgba(255, 140, 0, 0.8), 0 0 48px rgba(255, 140, 0, 0.6), inset
-        0 0 16px rgba(255, 140, 0, 0.4);
-    }
-  }
-
-  @keyframes neon-pulse-green {
-    0% {
-      box-shadow: 0 0 8px rgba(0, 255, 127, 0.8), 0 0 16px rgba(0, 255, 127, 0.6), 0 0 24px rgba(0, 255, 127, 0.4),
-        inset 0 0 8px rgba(0, 255, 127, 0.2);
-    }
-    100% {
-      box-shadow: 0 0 16px rgba(0, 255, 127, 1), 0 0 32px rgba(0, 255, 127, 0.8), 0 0 48px rgba(0, 255, 127, 0.6), inset
-        0 0 16px rgba(0, 255, 127, 0.4);
-    }
-  }
-
-  @keyframes neon-pulse-purple {
-    0% {
-      box-shadow: 0 0 8px rgba(255, 20, 147, 0.8), 0 0 16px rgba(255, 20, 147, 0.6), 0 0 24px rgba(255, 20, 147, 0.4),
-        inset 0 0 8px rgba(255, 20, 147, 0.2);
-    }
-    100% {
-      box-shadow: 0 0 16px rgba(255, 20, 147, 1), 0 0 32px rgba(255, 20, 147, 0.8), 0 0 48px rgba(255, 20, 147, 0.6),
-        inset 0 0 16px rgba(255, 20, 147, 0.4);
-    }
-  }
-
-  @keyframes neon-pulse-blue {
-    0% {
-      box-shadow: 0 0 8px rgba(0, 191, 255, 0.8), 0 0 16px rgba(0, 191, 255, 0.6), 0 0 24px rgba(0, 191, 255, 0.4),
-        inset 0 0 8px rgba(0, 191, 255, 0.2);
-    }
-    100% {
-      box-shadow: 0 0 16px rgba(0, 191, 255, 1), 0 0 32px rgba(0, 191, 255, 0.8), 0 0 48px rgba(0, 191, 255, 0.6),
-        inset 0 0 16px rgba(0, 191, 255, 0.4);
-    }
-  }
-
-  @keyframes neon-pulse-yellow {
-    0% {
-      box-shadow: 0 0 8px rgba(255, 255, 0, 0.8), 0 0 16px rgba(255, 255, 0, 0.6), 0 0 24px rgba(255, 255, 0, 0.4),
-        inset 0 0 8px rgba(255, 255, 0, 0.2);
-    }
-    100% {
-      box-shadow: 0 0 16px rgba(255, 255, 0, 1), 0 0 32px rgba(255, 255, 0, 0.8), 0 0 48px rgba(255, 255, 0, 0.6),
-        inset 0 0 16px rgba(255, 255, 0, 0.4);
-    }
-  }
-
-  @keyframes neon-pulse-red {
-    0% {
-      box-shadow: 0 0 8px rgba(255, 0, 0, 0.8), 0 0 16px rgba(255, 0, 0, 0.6), 0 0 24px rgba(255, 0, 0, 0.4),
-        inset 0 0 8px rgba(255, 0, 0, 0.2);
-    }
-    100% {
-      box-shadow: 0 0 16px rgba(255, 0, 0, 1), 0 0 32px rgba(255, 0, 0, 0.8), 0 0 48px rgba(255, 0, 0, 0.6),
-        inset 0 0 16px rgba(255, 0, 0, 0.4);
-    }
-  }
-
-  @keyframes neon-pulse-cyan {
-    0% {
-      box-shadow: 0 0 8px rgba(0, 255, 255, 0.8), 0 0 16px rgba(0, 255, 255, 0.6), 0 0 24px rgba(0, 255, 255, 0.4),
-        inset 0 0 8px rgba(0, 255, 255, 0.2);
-    }
-    100% {
-      box-shadow: 0 0 16px rgba(0, 255, 255, 1), 0 0 32px rgba(0, 255, 255, 0.8), 0 0 48px rgba(0, 255, 255, 0.6),
-        inset 0 0 16px rgba(0, 255, 255, 0.4);
-    }
-  }
-
-  /* 更鲜艳的边框脉冲动画 */
-  .pulse-border {
-    animation: pulse-border-enhanced 1.8s infinite;
-  }
-
-  @keyframes pulse-border-enhanced {
-    0% {
-      border-color: rgba(255, 140, 0, 0.7);
-      box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
-    }
-    25% {
-      border-color: rgba(0, 255, 127, 0.8);
-      box-shadow: 0 0 20px rgba(0, 255, 127, 0.6);
-    }
-    50% {
-      border-color: rgba(255, 20, 147, 0.9);
-      box-shadow: 0 0 30px rgba(255, 20, 147, 0.7);
-    }
-    75% {
-      border-color: rgba(0, 255, 255, 0.8);
-      box-shadow: 0 0 25px rgba(0, 255, 255, 0.6);
-    }
-    100% {
-      border-color: rgba(255, 140, 0, 0.7);
-      box-shadow: 0 0 15px rgba(255, 140, 0, 0.5);
-    }
-  }
-
-  /* 更强烈的文字发光效果 */
+  /* Brutalism 风格 - 无动画或简单动画 */
   .text-glow {
-    text-shadow: 0 0 8px currentColor, 0 0 16px currentColor, 0 0 24px currentColor, 0 0 32px currentColor;
-    animation: text-flicker 3s ease-in-out infinite;
+    /* 移除发光效果，改用粗体 */
+    font-weight: 800;
+    text-transform: uppercase;
   }
 
-  @keyframes text-flicker {
-    0%,
-    100% {
-      opacity: 1;
-      text-shadow: 0 0 8px currentColor, 0 0 16px currentColor, 0 0 24px currentColor, 0 0 32px currentColor;
-    }
-    2% {
-      opacity: 0.9;
-    }
-    4% {
-      opacity: 1;
-    }
-    8% {
-      opacity: 0.95;
-    }
-    10% {
-      opacity: 1;
-    }
-    50% {
-      text-shadow: 0 0 12px currentColor, 0 0 24px currentColor, 0 0 36px currentColor, 0 0 48px currentColor;
-    }
-    92% {
-      opacity: 1;
-    }
-    94% {
-      opacity: 0.95;
-    }
-    96% {
-      opacity: 1;
-    }
-    98% {
-      opacity: 0.98;
-    }
-  }
-
-  /* 更鲜艳的扫描线效果 */
+  /* Brutalism 风格 - 移除复杂效果 */
   .scan-lines::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(transparent 0%, rgba(0, 255, 127, 0.2) 50%, transparent 100%);
-    animation: scan 2.5s linear infinite;
-    pointer-events: none;
+    /* 移除扫描线效果 */
+    display: none;
   }
 
-  @keyframes scan {
-    0% {
-      transform: translateY(-100%);
-    }
-    100% {
-      transform: translateY(100vh);
-    }
-  }
-
-  /* 更鲜艳的全息效果 */
   .holographic {
-    background: linear-gradient(
-      45deg,
-      rgba(255, 140, 0, 0.15) 0%,
-      rgba(0, 255, 127, 0.15) 20%,
-      rgba(255, 20, 147, 0.15) 40%,
-      rgba(0, 255, 255, 0.15) 60%,
-      rgba(255, 140, 0, 0.15) 80%,
-      rgba(0, 255, 127, 0.15) 100%
-    );
-    background-size: 300% 300%;
-    animation: holographic-shift 6s ease-in-out infinite;
+    /* 移除全息效果 */
+    background: transparent;
   }
 
-  @keyframes holographic-shift {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
-  /* 增强故障效果 */
   .glitch {
-    animation: glitch 1.5s infinite;
-  }
-
-  @keyframes glitch {
-    0%,
-    90%,
-    100% {
-      transform: translate(0);
-      filter: hue-rotate(0deg);
-    }
-    10% {
-      transform: translate(-2px, -1px);
-      filter: hue-rotate(90deg);
-    }
-    20% {
-      transform: translate(2px, 1px);
-      filter: hue-rotate(180deg);
-    }
-    30% {
-      transform: translate(-1px, 2px);
-      filter: hue-rotate(270deg);
-    }
-    40% {
-      transform: translate(1px, -2px);
-      filter: hue-rotate(360deg);
-    }
-    50% {
-      transform: translate(-2px, -1px);
-      filter: hue-rotate(45deg);
-    }
-    60% {
-      transform: translate(2px, 1px);
-      filter: hue-rotate(135deg);
-    }
-    70% {
-      transform: translate(-1px, 2px);
-      filter: hue-rotate(225deg);
-    }
-    80% {
-      transform: translate(1px, -2px);
-      filter: hue-rotate(315deg);
-    }
+    /* 移除故障效果 */
   }
 
   .float {
-    animation: float 4s ease-in-out infinite;
+    /* 移除浮动效果 */
   }
 
-  @keyframes float {
-    0%,
-    100% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-8px);
-    }
-  }
-
-  /* 更鲜艳的数字雨效果 */
   .digital-rain::after {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: linear-gradient(
-        transparent 65%,
-        rgba(0, 255, 127, 0.06) 65.5%,
-        rgba(0, 255, 127, 0.06) 66%,
-        transparent 66.5%
-      ),
-      linear-gradient(
-        90deg,
-        transparent 65%,
-        rgba(255, 140, 0, 0.06) 65.5%,
-        rgba(255, 140, 0, 0.06) 66%,
-        transparent 66.5%
-      ),
-      linear-gradient(
-        45deg,
-        transparent 70%,
-        rgba(255, 20, 147, 0.04) 70.5%,
-        rgba(255, 20, 147, 0.04) 71%,
-        transparent 71.5%
-      );
-    background-size: 80px 80px, 80px 80px, 120px 120px;
-    animation: digital-rain 8s linear infinite;
-    pointer-events: none;
-    z-index: -1;
+    /* 移除数字雨效果 */
+    display: none;
   }
 
-  @keyframes digital-rain {
-    0% {
-      background-position: 0 0, 0 0, 0 0;
-    }
-    100% {
-      background-position: 0 80px, 80px 0, 120px 120px;
-    }
-  }
-
-  /* 新增强调文字样式 */
+  /* Brutalism 强调文字样式 */
   .text-cyber {
-    background: linear-gradient(45deg, #ff8c00, #00ff7f, #ff1493, #00ffff);
-    background-size: 400% 400%;
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-    animation: cyber-text 3s ease-in-out infinite;
-    font-weight: 700;
+    font-weight: 800;
+    color: #000000;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
 
-  @keyframes cyber-text {
-    0%,
-    100% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-  }
-
-  /* 添加超亮霓虹文字效果 */
   .neon-text-bright {
-    color: #ffffff;
-    text-shadow: 0 0 5px #ff8c00, 0 0 10px #ff8c00, 0 0 15px #ff8c00, 0 0 20px #ff8c00, 0 0 30px #ff8c00, 0 0 40px
-      #ff8c00;
-    animation: neon-text-flicker 2s ease-in-out infinite alternate;
+    font-weight: 800;
+    color: #000000;
+    text-transform: uppercase;
   }
 
-  @keyframes neon-text-flicker {
-    0% {
-      text-shadow: 0 0 5px #ff8c00, 0 0 10px #ff8c00, 0 0 15px #ff8c00, 0 0 20px #ff8c00, 0 0 30px #ff8c00, 0 0 40px
-        #ff8c00;
-    }
-    100% {
-      text-shadow: 0 0 8px #ff8c00, 0 0 16px #ff8c00, 0 0 24px #ff8c00, 0 0 32px #ff8c00, 0 0 48px #ff8c00, 0 0 64px
-        #ff8c00;
-    }
+  /* Brutalism 状态样式 */
+  .brutalist-status-running {
+    background-color: #00D1FF;
+    color: #000000;
+  }
+
+  .brutalist-status-completed {
+    background-color: #00FF85;
+    color: #000000;
+  }
+
+  .brutalist-status-pending {
+    background-color: #FFE500;
+    color: #000000;
+  }
+
+  .brutalist-status-failed {
+    background-color: #FF006E;
+    color: #FFFFFF;
   }
 }

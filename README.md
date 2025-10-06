@@ -4,7 +4,7 @@
 
 ![Tubed Banner](./public/logo.png)
 
-*下一代赛博朋克风格文件托管服务*
+*文件托管服务*
 
 [![CI/CD](https://img.shields.io/badge/CI%2FCD-%E5%B0%B1%E7%BB%AA-brightgreen?style=flat-square)](#部署)
 [![Docker](https://img.shields.io/badge/Docker-%E6%94%AF%E6%8C%81-blue?style=flat-square)](#docker-部署)
@@ -12,6 +12,8 @@
 [![Node.js](https://img.shields.io/badge/Node.js-22+-green?style=flat-square)](#环境要求)
 
 </div>
+
+![demo1](./public/demo1.png)
 
 ## ✨ 功能特性
 

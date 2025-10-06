@@ -168,10 +168,9 @@ export function UploadZone() {
     <div className="space-y-6">
       <Card
         className={cn(
-          "relative border-2 border-dashed transition-all duration-500 cursor-pointer holographic",
-          "hover:neon-glow hover:scale-105 transform",
-          isDragOver ? "pulse-border neon-glow scale-105" : "border-border",
-          isUploading && "pulse-border",
+          "relative border-[4px] border-dashed transition-all duration-300 cursor-pointer",
+          isDragOver ? "border-primary bg-primary/10 scale-105" : "border-black",
+          isUploading && "border-accent bg-accent/10",
         )}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
@@ -179,36 +178,36 @@ export function UploadZone() {
         onClick={handleFileSelect}
       >
         <div className="p-12 text-center space-y-4 relative">
-          <div className="mx-auto w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center neon-glow float">
-            <Upload className="w-8 h-8 text-primary" />
+          <div className="mx-auto w-20 h-20 rounded-2xl bg-primary flex items-center justify-center border-[3px] border-black shadow-[6px_6px_0px_0px_#000000]">
+            <Upload className="w-10 h-10 text-black" />
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-2xl font-[var(--font-heading)] text-white drop-shadow-lg neon-text-bright tracking-wide">
+            <h3 className="text-3xl font-extrabold text-foreground uppercase tracking-tight">
               拖拽文件到此处上传
             </h3>
-            <p className="text-lg text-gray-200 font-medium drop-shadow-md">
+            <p className="text-lg text-foreground font-bold">
               或者点击选择文件，支持 Ctrl+V 粘贴上传
             </p>
-            <p className="text-sm text-gray-300 mt-2">
+            <p className="text-sm text-muted-foreground font-semibold mt-2">
               支持：{getSupportedFileTypesDescription()}
             </p>
           </div>
 
           <Button
-            variant="outline"
-            className="neon-glow-green border-secondary text-secondary hover:bg-secondary/20 bg-transparent hover:glitch transition-all duration-300"
+            variant="secondary"
+            className="mt-4"
           >
             选择文件
           </Button>
 
           {isUploading && (
-            <div className="absolute inset-0 bg-background/90 flex items-center justify-center backdrop-blur-sm">
+            <div className="absolute inset-0 bg-background/95 flex items-center justify-center">
               <div className="text-center space-y-4">
-                <div className="w-12 h-12 border-2 border-primary border-t-transparent rounded-full animate-spin mx-auto neon-glow"></div>
-                <p className="text-primary font-medium text-glow">上传中...</p>
-                <div className="w-32 h-1 bg-border rounded-full overflow-hidden">
-                  <div className="h-full bg-primary rounded-full animate-pulse"></div>
+                <div className="w-16 h-16 border-[4px] border-accent border-t-transparent rounded-full animate-spin mx-auto"></div>
+                <p className="text-accent font-extrabold text-xl uppercase">上传中...</p>
+                <div className="w-48 h-3 bg-muted rounded-lg overflow-hidden border-[2px] border-black">
+                  <div className="h-full bg-accent rounded-sm animate-pulse"></div>
                 </div>
               </div>
             </div>
@@ -227,17 +226,16 @@ export function UploadZone() {
 
       {uploadedFiles.length > 0 && (
         <div className="space-y-4">
-          <h3 className="text-lg font-[var(--font-dm-sans)] text-secondary text-glow">已上传文件</h3>
+          <h3 className="text-2xl font-extrabold text-secondary uppercase">已上传文件</h3>
 
           <div className="grid gap-4">
             {uploadedFiles.map((file, index) => (
               <Card
                 key={file.id}
-                className="p-4 neon-glow-green holographic hover:scale-102 transition-all duration-300"
-                style={{ animationDelay: `${index * 0.1}s` }}
+                className="p-4 bg-secondary/20 hover:translate-x-1 hover:translate-y-1 hover:shadow-[6px_6px_0px_0px_#000000] transition-all duration-200"
               >
                 <div className="flex items-center gap-4">
-                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-muted flex items-center justify-center neon-glow">
+                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-background flex items-center justify-center border-[3px] border-black shadow-[4px_4px_0px_0px_#000000]">
                     {file.category === FILE_CATEGORIES.IMAGE ? (
                       <Image
                         src={file.url || "/placeholder.svg"}
@@ -249,7 +247,7 @@ export function UploadZone() {
                     ) : (
                       (() => {
                         const IconComponent = getFileIconComponent({ name: file.name, type: file.type } as File)
-                        return <IconComponent className="w-8 h-8 text-primary float" />
+                        return <IconComponent className="w-8 h-8 text-foreground" />
                       })()
                     )}
                   </div>
@@ -273,34 +271,34 @@ export function UploadZone() {
                     <p className="text-xs text-muted-foreground font-mono break-all">{getFullUrl(file.url)}</p>
                   </div>
 
-                  <div className="flex items-center gap-1">
+                  <div className="flex items-center gap-2">
                     {/* URL Copy Button */}
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="secondary"
                       onClick={() => copyUrl(file)}
-                      className="border-secondary text-secondary hover:bg-secondary/20 neon-glow-green hover:scale-110 transition-all duration-200 px-2"
+                      className="px-2"
                       title="复制 URL"
                     >
                       {copiedItem?.fileId === file.id && copiedItem?.format === "url" ? (
-                        <Check className="w-3 h-3 text-glow" />
+                        <Check className="w-4 h-4" />
                       ) : (
-                        <Link className="w-3 h-3" />
+                        <Link className="w-4 h-4" />
                       )}
                     </Button>
 
                     {/* Markdown Copy Button */}
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="default"
                       onClick={() => copyMarkdown(file)}
-                      className="border-primary text-primary hover:bg-primary/20 neon-glow hover:scale-110 transition-all duration-200 px-2"
+                      className="px-2"
                       title="复制 Markdown"
                     >
                       {copiedItem?.fileId === file.id && copiedItem?.format === "markdown" ? (
-                        <Check className="w-3 h-3 text-glow" />
+                        <Check className="w-4 h-4" />
                       ) : (
-                        <FileText className="w-3 h-3" />
+                        <FileText className="w-4 h-4" />
                       )}
                     </Button>
 
@@ -309,25 +307,25 @@ export function UploadZone() {
                       size="sm"
                       variant="outline"
                       onClick={() => copyHtml(file)}
-                      className="border-accent text-accent hover:bg-accent/20 neon-glow-purple hover:scale-110 transition-all duration-200 px-2"
+                      className="px-2 bg-accent text-accent-foreground"
                       title="复制 HTML"
                     >
                       {copiedItem?.fileId === file.id && copiedItem?.format === "html" ? (
-                        <Check className="w-3 h-3 text-glow" />
+                        <Check className="w-4 h-4" />
                       ) : (
-                        <Code className="w-3 h-3" />
+                        <Code className="w-4 h-4" />
                       )}
                     </Button>
 
                     {/* Remove Button */}
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="destructive"
                       onClick={() => removeFile(file.id)}
-                      className="border-destructive text-destructive hover:bg-destructive/20 hover:scale-110 transition-all duration-200 px-2 ml-1"
+                      className="px-2"
                       title="删除文件"
                     >
-                      <X className="w-3 h-3" />
+                      <X className="w-4 h-4" />
                     </Button>
                   </div>
                 </div>

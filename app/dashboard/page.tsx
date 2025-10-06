@@ -235,21 +235,20 @@ export default function DashboardPage() {
 
   return (
     <AuthGuard>
-      <div className="min-h-screen digital-rain">
-        <div className="scan-lines fixed inset-0 pointer-events-none z-10"></div>
+      <div className="min-h-screen">
         <Toaster position="top-center" />
 
         {/* 头部导航 */}
-        <header className="border-b border-border/50 bg-background/80 backdrop-blur-sm sticky top-0 z-40">
+        <header className="border-b-[4px] border-black bg-background/95 backdrop-blur-sm sticky top-0 z-40">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Link href="/" className="flex items-center space-x-2 neon-glow-green hover:scale-105 transition-transform">
-                  <Home className="w-5 h-5" />
-                  <span className="font-medium">返回首页</span>
+                <Link href="/" className="flex items-center space-x-2 transition-all">
+                  <Home className="w-6 h-6" />
+                  <span className="font-bold uppercase">返回首页</span>
                 </Link>
-                <div className="w-px h-6 bg-border"></div>
-                <h1 className="text-xl font-[var(--font-dm-sans)] text-primary text-glow">文件管理台</h1>
+                <div className="w-[3px] h-8 bg-black"></div>
+                <h1 className="text-2xl font-extrabold uppercase tracking-tight">文件管理台</h1>
               </div>
 
               <div className="flex items-center space-x-4">
@@ -258,7 +257,6 @@ export default function DashboardPage() {
                   size="sm"
                   onClick={() => fetchFiles(currentPage)}
                   disabled={loading}
-                  className="neon-glow-blue"
                 >
                   <RefreshCw className={`w-4 h-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
                   刷新
@@ -266,15 +264,15 @@ export default function DashboardPage() {
 
                 <Dialog open={isLogoutDialogOpen} onOpenChange={setIsLogoutDialogOpen}>
                   <DialogTrigger asChild>
-                    <Button variant="destructive" size="sm" className="neon-glow-red">
+                    <Button variant="destructive" size="sm">
                       <LogOut className="w-4 h-4 mr-2" />
                       退出登录
                     </Button>
                   </DialogTrigger>
-                  <DialogContent className="neon-glow holographic">
+                  <DialogContent>
                     <DialogHeader>
-                      <DialogTitle className="text-center text-glow">退出登录</DialogTitle>
-                      <DialogDescription className="text-center">
+                      <DialogTitle className="text-center">退出登录</DialogTitle>
+                      <DialogDescription className="text-center font-semibold">
                         您确定要退出登录吗？退出后需要重新输入验证码才能访问。
                       </DialogDescription>
                     </DialogHeader>
@@ -282,14 +280,12 @@ export default function DashboardPage() {
                       <Button
                         variant="outline"
                         onClick={() => setIsLogoutDialogOpen(false)}
-                        className="neon-glow-green"
                       >
                         取消
                       </Button>
                       <Button
                         variant="destructive"
                         onClick={handleLogout}
-                        className="neon-glow-red"
                       >
                         确定退出
                       </Button>
@@ -307,55 +303,55 @@ export default function DashboardPage() {
             {/* 统计信息 */}
             {stats && (
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Card className="p-4 text-center neon-glow holographic">
+                <Card className="p-4 text-center bg-primary/20">
                   <div className="flex items-center justify-center space-x-2 mb-2">
-                    <BarChart3 className="w-5 h-5 text-primary" />
-                    <span className="text-sm text-muted-foreground">总文件数</span>
+                    <BarChart3 className="w-6 h-6" />
+                    <span className="text-sm font-bold uppercase">总文件数</span>
                   </div>
-                  <div className="text-2xl font-bold text-primary text-glow">{stats.totalFiles}</div>
+                  <div className="text-3xl font-extrabold">{stats.totalFiles}</div>
                 </Card>
 
-                <Card className="p-4 text-center neon-glow holographic">
+                <Card className="p-4 text-center bg-secondary/20">
                   <div className="flex items-center justify-center space-x-2 mb-2">
-                    <BarChart3 className="w-5 h-5 text-secondary" />
-                    <span className="text-sm text-muted-foreground">总大小</span>
+                    <BarChart3 className="w-6 h-6" />
+                    <span className="text-sm font-bold uppercase">总大小</span>
                   </div>
-                  <div className="text-2xl font-bold text-secondary text-glow">{formatFileSize(stats.totalSize)}</div>
+                  <div className="text-3xl font-extrabold">{formatFileSize(stats.totalSize)}</div>
                 </Card>
 
-                <Card className="p-4 text-center neon-glow holographic">
+                <Card className="p-4 text-center bg-accent/20">
                   <div className="flex items-center justify-center space-x-2 mb-2">
-                    <BarChart3 className="w-5 h-5 text-blue-400" />
-                    <span className="text-sm text-muted-foreground">类型数</span>
+                    <BarChart3 className="w-6 h-6" />
+                    <span className="text-sm font-bold uppercase">类型数</span>
                   </div>
-                  <div className="text-2xl font-bold text-blue-400 text-glow">{Object.keys(stats.categories).length}</div>
+                  <div className="text-3xl font-extrabold">{Object.keys(stats.categories).length}</div>
                 </Card>
 
-                <Card className="p-4 text-center neon-glow holographic">
+                <Card className="p-4 text-center bg-destructive/20">
                   <div className="flex items-center justify-center space-x-2 mb-2">
-                    <BarChart3 className="w-5 h-5 text-green-400" />
-                    <span className="text-sm text-muted-foreground">当前页</span>
+                    <BarChart3 className="w-6 h-6" />
+                    <span className="text-sm font-bold uppercase">当前页</span>
                   </div>
-                  <div className="text-2xl font-bold text-green-400 text-glow">{currentPage}/{totalPages}</div>
+                  <div className="text-3xl font-extrabold">{currentPage}/{totalPages}</div>
                 </Card>
               </div>
             )}
 
             {/* 搜索和筛选 */}
-            <Card className="p-6 neon-glow holographic">
+            <Card className="p-6">
               <div className="space-y-4">
                 <form onSubmit={handleSearch} className="flex space-x-4">
                   <div className="flex-1 relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                     <input
                       type="text"
                       placeholder="搜索文件名..."
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      className="w-full pl-12 pr-4 py-3 bg-background border-[3px] border-black rounded-lg focus:outline-none font-semibold shadow-[4px_4px_0px_0px_#000000] focus:shadow-[2px_2px_0px_0px_#000000] transition-all"
                     />
                   </div>
-                  <Button type="submit" className="neon-glow-green">
+                  <Button type="submit" variant="secondary">
                     搜索
                   </Button>
                 </form>
@@ -393,7 +389,7 @@ export default function DashboardPage() {
                     <select
                       value={sortBy}
                       onChange={(e) => setSortBy(e.target.value as 'uploadedAt' | 'name' | 'size')}
-                      className="px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                      className="px-4 py-2 bg-background border-[3px] border-black rounded-lg focus:outline-none font-bold uppercase text-sm shadow-[4px_4px_0px_0px_#000000] cursor-pointer"
                     >
                       <option value="uploadedAt">按上传时间</option>
                       <option value="name">按文件名</option>
@@ -402,7 +398,7 @@ export default function DashboardPage() {
                     <select
                       value={sortOrder}
                       onChange={(e) => setSortOrder(e.target.value as 'ASC' | 'DESC')}
-                      className="px-3 py-2 bg-background border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
+                      className="px-4 py-2 bg-background border-[3px] border-black rounded-lg focus:outline-none font-bold uppercase text-sm shadow-[4px_4px_0px_0px_#000000] cursor-pointer"
                     >
                       <option value="DESC">降序</option>
                       <option value="ASC">升序</option>
@@ -418,7 +414,6 @@ export default function DashboardPage() {
                         <Button
                           variant={selectionMode ? "default" : "outline"}
                           onClick={toggleSelectionMode}
-                          className={selectionMode ? "neon-glow-cyan" : "neon-glow"}
                         >
                           {selectionMode ? <CheckSquare className="w-4 h-4 mr-2" /> : <Square className="w-4 h-4 mr-2" />}
                           {selectionMode ? "退出选择" : "选择模式"}
@@ -427,11 +422,10 @@ export default function DashboardPage() {
                         {selectionMode && (
                           <>
                             <Button
-                              variant="outline"
+                              variant="secondary"
                               size="sm"
                               onClick={selectAllFiles}
                               disabled={selectedFiles.size === files.length}
-                              className="neon-glow-green"
                             >
                               全选
                             </Button>
@@ -440,7 +434,6 @@ export default function DashboardPage() {
                               size="sm"
                               onClick={clearSelection}
                               disabled={selectedFiles.size === 0}
-                              className="neon-glow-blue"
                             >
                               清空
                             </Button>
@@ -450,14 +443,13 @@ export default function DashboardPage() {
 
                       {selectionMode && selectedFiles.size > 0 && (
                         <div className="flex items-center space-x-4">
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-sm font-bold uppercase">
                             已选择 {selectedFiles.size} 个文件
                           </span>
                           <Button
                             variant="destructive"
                             size="sm"
                             onClick={() => setIsBatchDeleteDialogOpen(true)}
-                            className="neon-glow-red"
                           >
                             <Trash2 className="w-4 h-4 mr-2" />
                             批量删除
@@ -492,20 +484,20 @@ export default function DashboardPage() {
                 ))}
               </div>
             ) : (
-              <Card className="p-12 text-center neon-glow holographic">
+              <Card className="p-12 text-center">
                 <div className="space-y-4">
-                  <div className="w-16 h-16 rounded-full bg-muted/20 flex items-center justify-center mx-auto">
-                    <Search className="w-8 h-8 text-muted-foreground" />
+                  <div className="w-20 h-20 rounded-2xl bg-muted flex items-center justify-center mx-auto border-[3px] border-black shadow-[6px_6px_0px_0px_#000000]">
+                    <Search className="w-10 h-10 text-foreground" />
                   </div>
-                  <h3 className="text-lg font-medium">没有找到文件</h3>
-                  <p className="text-muted-foreground">
+                  <h3 className="text-2xl font-extrabold uppercase">没有找到文件</h3>
+                  <p className="text-muted-foreground font-semibold">
                     {searchQuery || selectedCategory
                       ? "尝试调整搜索条件或筛选器"
                       : "您还没有上传任何文件"}
                   </p>
                   {!searchQuery && !selectedCategory && (
                     <Link href="/">
-                      <Button className="neon-glow-green">
+                      <Button variant="default">
                         去上传文件
                       </Button>
                     </Link>
@@ -526,7 +518,7 @@ export default function DashboardPage() {
                           e.preventDefault()
                           if (currentPage > 1) handlePageChange(currentPage - 1)
                         }}
-                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'neon-glow-green'}
+                        className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
                       />
                     </PaginationItem>
 
@@ -553,7 +545,6 @@ export default function DashboardPage() {
                               handlePageChange(pageNum)
                             }}
                             isActive={currentPage === pageNum}
-                            className={currentPage === pageNum ? 'neon-glow-blue' : 'neon-glow'}
                           >
                             {pageNum}
                           </PaginationLink>
@@ -574,7 +565,7 @@ export default function DashboardPage() {
                           e.preventDefault()
                           if (currentPage < totalPages) handlePageChange(currentPage + 1)
                         }}
-                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'neon-glow-green'}
+                        className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
                       />
                     </PaginationItem>
                   </PaginationContent>
@@ -586,10 +577,10 @@ export default function DashboardPage() {
 
         {/* 批量删除确认对话框 */}
         <Dialog open={isBatchDeleteDialogOpen} onOpenChange={setIsBatchDeleteDialogOpen}>
-          <DialogContent className="neon-glow holographic">
+          <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-center text-glow">批量删除文件</DialogTitle>
-              <DialogDescription className="text-center">
+              <DialogTitle className="text-center">批量删除文件</DialogTitle>
+              <DialogDescription className="text-center font-semibold">
                 您确定要删除选中的 {selectedFiles.size} 个文件吗？此操作无法撤销。
               </DialogDescription>
             </DialogHeader>
@@ -598,15 +589,15 @@ export default function DashboardPage() {
                 {Array.from(selectedFiles).slice(0, 10).map((fileId) => {
                   const file = files.find(f => f.id === fileId)
                   return file ? (
-                    <div key={fileId} className="flex items-center space-x-3 p-2 bg-background/50 rounded">
-                      <div className="w-2 h-2 bg-cyan-400 rounded-full"></div>
-                      <span className="text-sm truncate">{file.name}</span>
-                      <span className="text-xs text-muted-foreground">{formatFileSize(file.size)}</span>
+                    <div key={fileId} className="flex items-center space-x-3 p-2 bg-muted/50 rounded-lg border-[2px] border-black">
+                      <div className="w-3 h-3 bg-accent rounded-full"></div>
+                      <span className="text-sm truncate font-semibold">{file.name}</span>
+                      <span className="text-xs text-muted-foreground font-bold">{formatFileSize(file.size)}</span>
                     </div>
                   ) : null
                 })}
                 {selectedFiles.size > 10 && (
-                  <div className="text-center text-sm text-muted-foreground">
+                  <div className="text-center text-sm text-muted-foreground font-bold">
                     ... 以及其他 {selectedFiles.size - 10} 个文件
                   </div>
                 )}
@@ -617,7 +608,6 @@ export default function DashboardPage() {
                 variant="outline"
                 onClick={() => setIsBatchDeleteDialogOpen(false)}
                 disabled={isBatchDeleting}
-                className="neon-glow-green"
               >
                 取消
               </Button>
@@ -625,7 +615,6 @@ export default function DashboardPage() {
                 variant="destructive"
                 onClick={handleBatchDelete}
                 disabled={isBatchDeleting}
-                className="neon-glow-red"
               >
                 {isBatchDeleting ? '删除中...' : `确定删除 ${selectedFiles.size} 个文件`}
               </Button>
