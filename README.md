@@ -20,6 +20,7 @@
 - 🔥 **拖拽上传** - 直观的文件上传体验
 - 📋 **粘贴上传** - 使用 Ctrl+V 直接从剪贴板上传文件
 - 🎯 **多文件类型** - 支持图片、文档、视频、音频和压缩文件
+- 🖼️ **图片转换** - 动态格式转换、尺寸调整和质量优化（WebP、AVIF 等）
 - 🔐 **安全认证** - 基于 JWT 的身份验证和自定义验证码
 - 💾 **SQLite 数据库** - 轻量级且可靠的数据存储
 - 🐳 **Docker 就绪** - 简单的容器化部署
@@ -469,6 +470,51 @@ Content-Type: application/json
   }
 }
 ```
+
+#### 🖼️ 图片格式转换与优化
+
+**访问图片时动态转换格式：**
+```http
+GET /uploads/image.png?format=webp&quality=85&width=800
+```
+
+**支持的查询参数：**
+
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+|------|------|------|--------|--------|
+| `format` | 目标格式 | string | webp, jpeg, jpg, png, avif, gif | 原格式 |
+| `quality` | 图片质量 | number | 1-100 | 80 |
+| `width` / `w` | 目标宽度 | number | 1-4096 | 原宽度 |
+| `height` / `h` | 目标高度 | number | 1-4096 | 原高度 |
+| `fit` | 适配模式 | string | cover, contain, fill, inside, outside | cover |
+
+**使用示例：**
+
+```http
+# 转换为 WebP 格式
+/uploads/demo.png?format=webp
+
+# 调整尺寸并转换格式
+/uploads/demo.png?format=webp&width=800&quality=85
+
+# 生成缩略图
+/uploads/demo.png?format=webp&width=400&height=300&fit=cover&quality=80
+
+# 响应式图片（多种尺寸）
+/uploads/demo.png?format=webp&width=640   # 小屏幕
+/uploads/demo.png?format=webp&width=1024  # 中屏幕
+/uploads/demo.png?format=webp&width=1920  # 大屏幕
+```
+
+**特性：**
+- ✅ 无需认证，公开访问
+- ✅ 自动缓存优化（CDN友好）
+- ✅ 支持现代图片格式（WebP、AVIF）
+- ✅ 智能尺寸调整（不放大原图）
+- ✅ 多种适配模式
+- ✅ 安全限制（最大 4096px）
+
+> 📖 详细文档请参考：[图片转换功能文档](./docs/IMAGE_TRANSFORM.md)
 
 ### 错误响应
 
