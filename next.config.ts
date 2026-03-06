@@ -1,6 +1,15 @@
 import type { NextConfig } from "next";
 
+const deploymentId = process.env.DEPLOYMENT_ID?.trim() || undefined;
+const nextBuildId = process.env.NEXT_BUILD_ID?.trim() || deploymentId;
+
 const nextConfig: NextConfig = {
+  ...(deploymentId ? { deploymentId } : {}),
+  ...(nextBuildId
+    ? {
+        generateBuildId: async () => nextBuildId,
+      }
+    : {}),
   output: 'standalone',
   // Docker Alpine 下确保 sharp 等 native 二进制被包含进 standalone 产物
   outputFileTracingIncludes: {

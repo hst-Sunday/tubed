@@ -14,6 +14,10 @@ RUN npm ci
 # Rebuild the source code only when needed
 FROM base AS builder
 WORKDIR /app
+ARG DEPLOYMENT_ID=dev-local
+ARG NEXT_BUILD_ID=dev-local
+ENV DEPLOYMENT_ID=$DEPLOYMENT_ID
+ENV NEXT_BUILD_ID=$NEXT_BUILD_ID
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
@@ -25,8 +29,12 @@ RUN npm run build
 # Production image, copy all the files and run next
 FROM base AS runner
 WORKDIR /app
+ARG DEPLOYMENT_ID=dev-local
+ARG NEXT_BUILD_ID=dev-local
 
 ENV NODE_ENV=production
+ENV DEPLOYMENT_ID=$DEPLOYMENT_ID
+ENV NEXT_BUILD_ID=$NEXT_BUILD_ID
 # Uncomment the following line in case you want to disable telemetry during runtime.
 ENV NEXT_TELEMETRY_DISABLED=1
 

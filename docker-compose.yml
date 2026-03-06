@@ -1,13 +1,14 @@
 services:
   tubed:
-    image: ghcr.io/hst-sunday/tubed:latest
+    image: "${TUBED_IMAGE_REPOSITORY:-ghcr.io/hst-sunday/tubed}:${TUBED_IMAGE_TAG:?Set TUBED_IMAGE_TAG to a published GHCR tag such as sha-<12 chars> or vX.Y.Z}"
     container_name: tubed-app
+    pull_policy: always
     restart: unless-stopped
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=production
-      - AUTH_CODE=${AUTH_CODE}  
+      - AUTH_CODE=${AUTH_CODE}
       - JWT_SECRET=${JWT_SECRET}
     volumes:
       # Persistent data storage
