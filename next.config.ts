@@ -1,8 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // 暂时禁用standalone模式进行测试
   output: 'standalone',
+  // Docker Alpine 下确保 sharp 等 native 二进制被包含进 standalone 产物
+  outputFileTracingIncludes: {
+    '/*': ['node_modules/sharp/**/*'],
+  },
   async rewrites() {
     return [
       {
@@ -14,6 +17,25 @@ const nextConfig: NextConfig = {
   // 统一设置缓存头，便于CDN按源站策略缓存
   async headers() {
     return [
+      // HTML 页面不要让外部 CDN 长时间缓存，否则发布后会出现旧 HTML 引用新构建中不存在的 chunk
+      {
+        source: '/',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-cache, no-store, max-age=0, must-revalidate' },
+        ],
+      },
+      {
+        source: '/login',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-cache, no-store, max-age=0, must-revalidate' },
+        ],
+      },
+      {
+        source: '/dashboard',
+        headers: [
+          { key: 'Cache-Control', value: 'private, no-cache, no-store, max-age=0, must-revalidate' },
+        ],
+      },
       // Next 构建产物：强缓存 + immutable
       {
         source: '/_next/static/:path*',

@@ -9,7 +9,7 @@ WORKDIR /app
 
 # Install dependencies based on the preferred package manager
 COPY package.json package-lock.json* ./
-RUN npm ci && npm install -g pm2
+RUN npm ci
 
 # Rebuild the source code only when needed
 FROM base AS builder
@@ -17,9 +17,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Next.js collects completely anonymous telemetry data about general usage.
-# Learn more here: https://nextjs.org/telemetry
-# Uncomment the following line in case you want to disable telemetry during the build.
+# Disable Next.js telemetry during build
 ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN npm run build
@@ -41,14 +39,8 @@ RUN adduser --system --uid 1001 nextjs
 # Create necessary directories
 RUN mkdir -p /app/data /app/public/uploads /app/logs && chown -R nextjs:nodejs /app/data /app/public/uploads /app/logs
 
+# Standalone 不包含 public 和 .next/static，需单独复制（见 Next.js 文档 output: 'standalone'）
 COPY --from=builder /app/public ./public
-
-# Set the correct permission for prerender cache
-RUN mkdir .next
-RUN chown nextjs:nodejs .next
-
-# Automatically leverage output traces to reduce image size
-# https://nextjs.org/docs/advanced-features/output-file-tracing
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
